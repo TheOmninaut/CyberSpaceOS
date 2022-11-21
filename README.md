@@ -6,14 +6,8 @@ NOTE: this is my just for my personal setup. its an ease of use for me so i can 
 
 -----Install/Run-----
 
-cd ~
-
-cd Downloads
-
 git clone https://github.com/TheOmninaut/ArchSetup
 
 cd ArchSetup
-
-chmod +x OmniSpace_OS.sh
 
 ./OmniSpace_OS.sh
