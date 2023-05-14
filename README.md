@@ -10,6 +10,9 @@ The goal is to make a simple one command file that can make all of the changes t
 -----Install/Run-----
 
 git clone https://github.com/TheOmninaut/ArchSetup
+
 cd ArchSetup
+
 chmod +x CyberSpace6_OS.sh
+
 ./CyberSpace6_OS.sh
