@@ -173,7 +173,8 @@ fi
 function install_programs {
 
 sudo pacman -Rns plasma-wayland-session egl-wayland
-sudo pacman -Syu
+pacman -S archlinux-keyring
+sudo pacman -Syyuu
 sudo pacman -S awesome grub-customizer
 sudo systemctl set-default multi-user.target
 
@@ -206,7 +207,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
-sudo yay -Syu
 
 cd ..
 git clone https://aur.archlinux.org/librewolf-bin.git
@@ -214,6 +214,7 @@ cd librewolf-bin
 makepkg -si --skippgpcheck
 
 yay -S epy-git protonvpn fluent-reader librewolf-bin vscodium-bin ocs-url
+yay -Syyuu --devel
 
 echo
 echo
