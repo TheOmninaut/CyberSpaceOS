@@ -184,7 +184,7 @@ sudo pacman -S fbset tmux cmus w3m ranger htop feh neofetch neovim git pkgfile m
 
 echo -e "\e[31mInstalling Desktop Programs\e[0m"
 sleep 2
-sudo pacman -S yakuake steam blender vlc calibre elisa kiwix-desktop lutris audacity discord qbittorrent kdenlive flameshot
+sudo pacman -S yakuake steam blender vlc calibre elisa kiwix-desktop lutris audacity discord qbittorrent kdenlive flameshot libreoffice-fresh
 
 echo -e "\e[31mDependencies for KDE Ricing\e[0m"
 sleep 2
