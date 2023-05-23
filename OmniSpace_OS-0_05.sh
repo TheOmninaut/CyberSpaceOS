@@ -3,6 +3,7 @@
 #------Omninaut Presents------
 #       Arch Setup/Ricer
 
+
 #//>> Installing Arch
 
 # iwctl
@@ -80,18 +81,6 @@ spin_anim=("
        ▀▀▄▄█▀▀
 ")
 
-for i in {1..4}
-do
-
-for item in "${spin_anim[@]}"
-do
-clear
-echo "$item"
-sleep .2
-done
-
-done
-
 name_anim=("
        ▄▄▀█▀▄▄
    ▄▄▀▀   █   ▀▀▄▄
@@ -115,12 +104,26 @@ name_anim=("
       / _____            __      _____    ____    _____    _____   ____     _____   _____     /
      / / ___/\ __  __   / /\_   / ___/\  /   /\  / ___/\  /    /\ /    \   / ___/\ / ___/\   /
     / / /___\// /\/ /\ /    /\ / __/_\/ / _ \ /  __\ \ / / ___/ //  _  /\ / /__ \// __/_\/  /
-   / /_____/\ \__  / //____/ //_____/\ /_/ \_\ \\____/\ /_/\__\//_/ /_/ //____/\ /_____/\  /
-  /  \_____\/   /_/ / \____\/ \_____\/ \_\/ \_\/ \___\/ \_\/    \_\/\_\/ \____\/ \_____\/ /
+   / /_____/\ \__  / //____/ //_____/\ /_/ \_\  \____/\ /_/\__\//_/ /_/ //____/\ /_____/\  /
+  /  \_____\/   /_/ / \____\/ \_____\/ \_\/ \_\  \___\/ \_\/    \_\/\_\/ \____\/ \_____\/ /
  /______________\_\/_____________________________________________________________________/
 
 ")
 
+#StartupAnim v-- num of times to loop anim
+for i in {1..4}
+do
+
+for item in "${spin_anim[@]}"
+do
+clear
+echo "$item"
+sleep .2
+done
+
+done
+
+# Then Transision Anim
 for item in "${name_anim[@]}"
 do
 clear
@@ -184,26 +187,30 @@ fi
 #//>> Install Programs
 function install_programs {
 
-sudo pacman -Rns plasma-wayland-session egl-wayland
-sudo pacman -Syu
+sudo pacman -Rns plasma-wayland-session egl-wayland --noconfirm
+sudo pacman -Syyuu --noconfirm
 sudo pacman -S awesome grub-customizer --noconfirm
 sudo systemctl set-default multi-user.target
+sudo systemctl enable bluetooth
 
 echo -e "\e[31mInstalling Terminal Programs\e[0m"
 sleep 2
-sudo pacman -S fbset tmux cmus w3m ranger htop feh neofetch neovim git pkgfile man timeshift --noconfirm
+sudo pacman -S fbset tmux cmus w3m ranger htop feh neofetch neovim git base-devel pkgfile man --noconfirm
 
 echo -e "\e[31mInstalling Desktop Programs\e[0m"
 sleep 2
-sudo pacman -S yakuake blender vlc calibre elisa kiwix-desktop audacity discord qbittorrent kdenlive flameshot libreoffice-fresh --noconfirm
+sudo pacman -S yakuake blender vlc calibre elisa kiwix-desktop audacity discord qbittorrent kdenlive flameshot libreoffice-fresh ksysguard --noconfirm
 
-echo -e "\e[31mDependencies for KDE Ricing\e[0m"
-sleep 2
-sudo pacman -S qt5-base qt5-svg qt5-declarative qt5-quickcontrols --noconfirm
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 echo -e "\e[31mGames / Platforms\e[0m"
 sleep 2
 sudo pacman -S steam lutris openmw --noconfirm
+yay -S minecraft-launcher --noconfirm
+
+echo -e "\e[31mDependencies for KDE Ricing\e[0m"
+sleep 2
+sudo pacman -S qt5-base qt5-svg qt5-declarative qt5-quickcontrols --noconfirm
 
 cd ~
 mkdir Temporary
@@ -215,9 +222,10 @@ makepkg -si --noconfirm
 sudo systemctl enable --now snapd.socket
 sudo ln -s /var/lib/snapd/snap /snap
 cd ..
-sudo snap install mapscii --noconfirm
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# sudo pacman -S flatpak --noconfirm
+# flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+# flatpak update
 
 git clone https://aur.archlinux.org/yay.git
 cd yay
@@ -229,18 +237,43 @@ git clone https://aur.archlinux.org/librewolf-bin.git
 cd librewolf-bin
 makepkg -si --skippgpcheck --noconfirm
 
-yay -S epy-git protonvpn fluent-reader-bin librewolf-bin vscodium-bin ocs-url
+yay -S epy-ereader-git protonvpn fluent-reader-bin librewolf-bin vscodium-bin ocs-url timeshift --noconfirm
+
+sudo snap install mapscii keepassxc --noconfirm
+
+echo -e "\e[31mVirutal Machines\e[0m"
+sleep 2
+
+sudo pacman -S qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt --noconfirm
+# https://github.com/ntdevlabs/tiny11builder
+
+
+read -p "Download Emulators? y/n" -n 1 -r
 
 echo
 echo
-echo -e "\e[31mNOTICE! type 'y' then press 'Enter' for the following prompts until word DONE! appears\e[0m"
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+
+sudo pacman -S snes9x mupen64plus dolphin-emu cemu --noconfirm
+yay -S vbam-git mesen2-git --noconfirm
+
+# Yuzu, Pcsx2 Rpcs3 ePSXe --APPIMAGE (Download From Websites)
+kde-open https://yuzu-emu.org/downloads/
+kde-open https://pcsx2.net/downloads
+kde-open https://rpcs3.net/download
+kde-open https://www.epsxe.com/download.php
+# Xenia can only run on Windows so get it setup on windows VM
+
+fi
+
+
 cd ~
 rm -r Temporary --force
 
 echo -e "\e[32mDone!\e[0m"
 sleep 2
 
-prompt_setup
 }
 #//<<
 
@@ -278,7 +311,7 @@ echo -e "Ricing Programs"
 #Yakuake
 #VSCode -rust - explicit code folding - nord themes
 
-# DELETE THESE //i could just get their codes to add above but im lazy and will do that later but i dont want to lose the links so im not deleting these lines
+
 # Windows 11 GTK
 "ocs-url ocs://install?url=https%3A%2F%2Ffiles03.pling.com%2Fapi%2Ffiles%2Fdownload%2Fj%2FeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTY3MTM4MzkzMiwidSI6bnVsbCwibHQiOiJpbnN0YWxsIiwicyI6ImFkYjYyZGIzNjIzM2VlMmNmZTFiNzdmZmQ0MjMyMTk4NWM2OWVlM2ViMzU0OTBiYzhkOGE1ZGZiYjRlYTFjZjZmMjhmMjQ3ZTU3YWY1ZDY1YTg4NzA2NmFkOTk5NGNmNjgyMmI5N2IwYzQ4YzBhYjgwMDc2MGVmZTQ5ZTEwMGIwIiwidCI6MTY4NDEyMTk1OSwic3RmcCI6ImJiMWMyYzlmOTI3Y2UzNmIxZDMzOTM3MmFhOTFhNGJkIiwic3RpcCI6Ijc2LjE3MS4xNzEuMjQwIn0.sNBMEO-HpSqLXgKDHjMhNvOowBVpZgdHYVvqEaftrTw%2FWindows-11.tar.xz&type=gtk3_themes&filename=Windows-11.tar.xz"
 
@@ -317,8 +350,6 @@ ocs-url "ocs://install?url=https%3A%2F%2Ffiles03.pling.com%2Fapi%2Ffiles%2Fdownl
 # Latte Active Launcher Kwin Script
 ocs-url "ocs://install?url=https%3A%2F%2Ffiles03.pling.com%2Fapi%2Ffiles%2Fdownload%2Fj%2FeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTUyMDY4Njc3MywidSI6bnVsbCwibHQiOiJpbnN0YWxsIiwicyI6ImY1NjQxZDJkOWRjNWZjYWJmNTRmOGFhYzY2OGUyZTAxZTliMWNlZjJjNmNmM2YzZWRmYmRjZDU3YzFkN2ZkNzg0NGVlZWRhZWYxMTYzYWNiYjYzMzU4ZGIyMzg3NzQyODVmZTIxMjhmNTFlMTliZjczNjc2NmFkNmUwZjhhNzg0IiwidCI6MTY4NDEyMzM1MCwic3RmcCI6ImQ3ODRlYmExNzBiNzc0MTczZWI2ODViMWU4ZWY2MWI2Iiwic3RpcCI6Ijc2LjE3MS4xNzEuMjQwIn0.TMtIZSVDZPds-0Tr3nVZPAnwFjk4WUApoUcot3A6FXs%2Fkwin_script_activatelattelaunchermenu.kwinscript&type=kwin_scripts&filename=kwin_script_activatelattelaunchermenu.kwinscript"
 
-prompt_setup
-
 }
 #//<<
 
@@ -342,23 +373,25 @@ sleep 2
 # PS1='\[\033[1;37m\]\[\033[1;36m\][\u]\[\033[1;34m\] \w\[\033[1;36m\]> \[\033[1;37m\]'
 
 # Custom bash commands
-# alias desktop="sudo systemctl start sddm"
+# alias de="sudo systemctl start sddm"
+# alias bluetooth "sudo systemctl start bluetooth"
 # alias omnispace="cd ~/Downloads/ && ./OmniSpace_OS.sh"
 # alias logout="qdbus org.kde.ksmserver /KSMServer logout 0 3 3"
 # alias uninstall="sudo pacman -Rns"
 # alias install="sudo pacman -S"
-# alias update="sudo pacman -Syu"
+# alias update="sudo pacman -Syyuu"
 
 
 #Edit /etc/issue to display ascii_name
 
-#        ________________________________________________________________________________________
-#       / \e[36m_____            __      _____    ____    _____    _____   ____     _____   _____     \e[0m/
-#      / \e[36m/ ___/\\ __  __   / /\\_   / ___/\\  /   /\\  / ___/\\  /    /\\ /    \\   / ___/\\ / ___/\\   \e[0m/
-#     / \e[36m/ /___\\// /\\/ /\\ /    /\\ / __/_\\/ / _ \\ /  __\\ \\ / / ___/ //  _  /\\ / /__ \\// __/_\\/  \e[0m/
-#    / \e[36m/_____/\\ \\__  / //____/ //_____/\\ /_/ \\_\\ \\\\____/\\ /_/\\__\\//_/ /_/ //____/\\ /_____/\\  \e[0m/
-#   /  \e[36m\\_____\\/   /_/ / \\____\\/ \\_____\\/ \\_\\/ \\_\\/ \\___\\/ \\_\\/    \\_\\/\\_\\/ \\____\\/ \\_____\\/ \e[0m/
-#  /______________\e[36m\\_\\/\e[0m_____________________________________________________________________/
+#                      ----------Omninaut Presents----------
+#     _________________________________________________________________________
+#     \e[36m_____          __     _____   ____   _____   _____  ____    _____  _____\e[0m
+#    \e[36m/ ___/ __  __  / /__  / ___/  /   /  / ___/  /    / /    \\  / ___/ / ___/\e[0m
+#   \e[36m/ /___ / /_/ / /    / / __/_  / _ \\   __\\ \\  / ___/ /  _  / / /__  / __/_\e[0m
+#  \e[36m/_____/ \\__  / /____/ /_____/ /_/ \\_\\ \\____/ /_/    /_/ /_/ /____/ /_____/\e[0m
+# ___________\e[36m/_/\e[0m____________________________________________________________
+#                                                       \r (\l)
 
 
 }
@@ -373,11 +406,28 @@ sleep 2
 }
 #//<<
 
-
+play_animation
+prompt_setup
 
 #----Custom Stuff to make----
 
 # Grub Screen https://nx2.site/grub-ascii-theme
 # KDE Recreations
-# Ascii animations and game for installer w/ options and perameters
+# Diffs in endevour vs arch to apply to arch
+# Game Launcher / visual Organizer (dear IMGUI)
 
+# ----------TODO-------------------
+# rewrite installer to do a full install with everything then add a second option to manually choose each thing. also change colors. 
+# remake yakuake theme from scratch with a fresh install
+# gather/complete instructions for each kde rice. THEN:
+# 	bash it with files and make it autorun
+# CHANGE directories to a temp location
+# 	maybe add an option to save all downloaded files as backup to a folder after install
+# change color theme for system overall to NORD & teal
+# see if its possible to play sounds from terminal.
+# 
+# Make installer a graphical enviornment like archinstall. Make arrows move selection and have to press q to quit or choose menu option quit
+# make installer a game
+
+# ----------Links
+# https://www.shellhacks.com/yes-no-bash-script-prompt-confirmation/
