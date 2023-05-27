@@ -13,6 +13,6 @@ git clone https://github.com/TheOmninaut/ArchSetup
 
 cd ArchSetup
 
-chmod +x CyberSpace6_OS.sh
+chmod +x CyberSpaceOS.sh
 
-./CyberSpace6_OS.sh
+./CyberSpaceOS.sh
