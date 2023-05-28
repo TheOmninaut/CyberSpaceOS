@@ -1,4 +1,5 @@
 #!/bin/bash
+#0.06
 
 #------Omninaut Presents------
 #       Arch Setup/Ricer
@@ -187,29 +188,22 @@ fi
 #//>> Install Programs
 function install_programs {
 
-sudo pacman -Rns plasma-wayland-session egl-wayland --noconfirm
+echo -e "\e[31mSystem Essentials & Initialization\e[0m" && sleep 2
+
+sudo pacman -Rns plasma-wayland-session egl-wayland vim --noconfirm
 sudo pacman -Syyuu --noconfirm
-sudo pacman -S awesome grub-customizer --noconfirm
-sudo systemctl set-default multi-user.target
-sudo systemctl enable bluetooth
-
-echo -e "\e[31mInstalling Terminal Programs\e[0m"
-sleep 2
-sudo pacman -S fbset tmux cmus w3m ranger htop feh neofetch neovim git base-devel pkgfile man --noconfirm
-
-echo -e "\e[31mInstalling Desktop Programs\e[0m"
-sleep 2
-sudo pacman -S yakuake blender vlc calibre elisa kiwix-desktop audacity discord qbittorrent kdenlive flameshot libreoffice-fresh ksysguard --noconfirm
-
+sudo pacman -S awesome grub-customizer power-profiles-daemon firewalld --noconfirm
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-echo -e "\e[31mGames / Platforms\e[0m"
-sleep 2
-sudo pacman -S steam lutris openmw --noconfirm
-yay -S minecraft-launcher --noconfirm
-
+sudo systemctl set-default multi-user.target
+sudo systemctl enable power-profiles-daemon
+sudo systemctl enable bluetooth
 cd ~
+mkdir Backups
+mkdir Projects
 mkdir Temporary
+
+#-----
+
 cd Temporary
 
 git clone https://aur.archlinux.org/snapd.git
@@ -233,41 +227,56 @@ git clone https://aur.archlinux.org/librewolf-bin.git
 cd librewolf-bin
 makepkg -si --skippgpcheck --noconfirm
 
+#-----
+
+echo -e "\e[31mInstalling Terminal Programs\e[0m" && sleep 2
+
+sudo pacman -S fbset tmux cmus w3m ranger htop feh neofetch neovim git base-devel pkgfile man --noconfirm
+sudo snap install mapscii --noconfirm
+
+#-----
+
+echo -e "\e[31mInstalling Desktop Programs\e[0m" && sleep 2
+
+sudo pacman -S yakuake blender vlc calibre elisa kiwix-desktop audacity discord qbittorrent kdenlive flameshot libreoffice-fresh ksysguard --noconfirm
 yay -S epy-ereader-git protonvpn fluent-reader-bin librewolf-bin vscodium-bin timeshift --noconfirm
+sudo snap install keepassxc --noconfirm
 
-sudo snap install mapscii keepassxc --noconfirm
+#-----
 
-echo -e "\e[31mVirutal Machines\e[0m"
-sleep 2
+echo -e "\e[31mGames / Platforms / Emulators\e[0m" && sleep 2
 
-sudo pacman -S qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt --noconfirm
-# https://github.com/ntdevlabs/tiny11builder
-
-
-read -p "Download Emulators? y/n" -n 1 -r
-
-echo
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-
+sudo pacman -S steam lutris openmw --noconfirm
 sudo pacman -S snes9x mupen64plus dolphin-emu cemu --noconfirm
+yay -S minecraft-launcher --noconfirm
 yay -S vbam-git mesen2-git --noconfirm
 
-# Yuzu, Pcsx2 Rpcs3 ePSXe --APPIMAGE (Download From Websites)
+echo -e "\e[31mYuzu, Pcsx2 Rpcs3 & ePSXe are Appimages\e[0m"
 kde-open https://yuzu-emu.org/downloads/
 kde-open https://pcsx2.net/downloads
 kde-open https://rpcs3.net/download
 kde-open https://www.epsxe.com/download.php
+
 # Xenia can only run on Windows so get it setup on windows VM
+echo -e "\e[31mXenia can only run on Windows so get it setup on windows VM\e[0m"
+sleep 5
 
-fi
+#-----
 
+echo -e "\e[31mVirutal Machines\e[0m" && sleep 2
+
+sudo pacman -S qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt --noconfirm
+# https://github.com/ntdevlabs/tiny11builder
+
+#-----
+
+echo -e "\e[31mCleanup\e[0m"
 
 cd ~
 rm -r Temporary --force
+sudo pacman -Sc --noconfirm
 
-echo -e "\e[32mDone!\e[0m"
+echo -e "\e[32mDone! Reboot Recommended\e[0m"
 sleep 2
 
 }
@@ -339,7 +348,7 @@ sleep 2
 # alias logout="qdbus org.kde.ksmserver /KSMServer logout 0 3 3"
 # alias uninstall="sudo pacman -Rns"
 # alias install="sudo pacman -S"
-# alias update="sudo pacman -Syyuu"
+# alias update="sudo pacman -Syyuu && sudo pacman -Sc"
 
 
 #Edit /etc/issue to display ascii_name
@@ -388,6 +397,8 @@ prompt_setup
 # 
 # Make installer a graphical enviornment like archinstall. Make arrows move selection and have to press q to quit or choose menu option quit
 # make installer a game
+# make a linux bash version of Tiny11's .bat except automate the downloading of the windows.iso & msdconfig or whatever additional file is needed. Basically automate somehow with this bash script, downloading windows 11, then stripping it and feeding it to the virtual machine. 
+# find out if KDE's settings are saved into a file
 
 # ----------Links
 # https://www.shellhacks.com/yes-no-bash-script-prompt-confirmation/
