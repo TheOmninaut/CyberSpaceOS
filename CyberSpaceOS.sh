@@ -1,9 +1,8 @@
 #!/bin/bash
-#0.06
 
 #------Omninaut Presents------
-#       Arch Setup/Ricer
-
+#        CyberSpace OS
+#0.07
 
 #//>> Installing Arch
 
@@ -18,10 +17,11 @@
 # archinstall
 # Include git during install under "additional packages"
 # cd Downloads
-# git clone https://github.com/theomninaut/archsetup
-# cd ArchSetup
-# chmod +x CyberSpace6_OS.sh
-# ./CyberSpace6_OS.sh
+# git clone https://github.com/theomninaut/CyberSpaceOS
+# cd CyberSpaceOS
+# chmod +x CyberSpaceOS.sh
+# ./CyberSpaceOS.sh
+
 
 #//<<
 
@@ -185,71 +185,103 @@ fi
 }
 #//<<
 
+
+#//>> Create backup
+
+sudo pacman -S archlinux-keyring git base-devel
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si --noconfirm
+yay -Syu --noconfirm
+yay -S timeshift --noconfirm
+sudo timeshift --create --comments "Fresh Install"
+
+#//<<-----
+
 #//>> Install Programs
 function install_programs {
 
+       #//>> System Essentials & Initialization
 echo -e "\e[31mSystem Essentials & Initialization\e[0m" && sleep 2
 
 sudo pacman -Rns plasma-wayland-session egl-wayland vim --noconfirm
 sudo pacman -Syyuu --noconfirm
-sudo pacman -S awesome grub-customizer power-profiles-daemon firewalld --noconfirm
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-sudo systemctl set-default multi-user.target
-sudo systemctl enable power-profiles-daemon
-sudo systemctl enable bluetooth
+sudo pacman -S grub-customizer power-profiles-daemon firewalld opendoas --noconfirm
+echo permit :wheel | sudo tee /etc/doas.conf
+doas systemctl set-default multi-user.target
+doas systemctl enable power-profiles-daemon
+doas systemctl enable bluetooth
 cd ~
 mkdir Backups
 mkdir Projects
+mkdir -p Applications
 mkdir Temporary
-
-#-----
 
 cd Temporary
 
 git clone https://aur.archlinux.org/snapd.git
 cd snapd
 makepkg -si --noconfirm
-sudo systemctl enable --now snapd.socket
-sudo ln -s /var/lib/snapd/snap /snap
+doas systemctl enable --now snapd.socket
+doas ln -s /var/lib/snapd/snap /snap
 cd ..
 
-# sudo pacman -S flatpak --noconfirm
+doas pacman -S flatpak --noconfirm
 # flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 # flatpak update
 
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si --noconfirm
-sudo yay -Syu --noconfirm
+#//<<-----
 
-cd ..
+       #//>> Development
+echo -e "\e[31mDevelopment\e[0m" && sleep 2
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+doas pacman -S gcc gdb --noconfirm
+#//<<-----
+
+       #//>> Terminal Programs
+echo -e "\e[31mInstalling Terminal Programs\e[0m" && sleep 2
+
+doas pacman -S fbset tmux cmus w3m ranger htop feh neofetch neovim git base-devel pkgfile man --noconfirm
+doas snap install mapscii --noconfirm
+
+#//<<-----
+
+       #//>> Installing KDE & Awesome
+
+doas pacman -S xorg xorg-xinit
+# echo exec startkde | doas tee ~/.xinitrc
+doas pacman -S plasma awesome
+
+#maybe (if not just stick to sddm i guess)
+lightdm lightdm-gtk-greeter
+doas systemctl enable lightdm.service
+
+       #//<<-----
+
+       #//>> Desktop Programs
+echo -e "\e[31mInstalling Desktop Programs\e[0m" && sleep 2
+
+cd ~/Temporary
 git clone https://aur.archlinux.org/librewolf-bin.git
 cd librewolf-bin
 makepkg -si --skippgpcheck --noconfirm
 
-#-----
+doas pacman -S yakuake blender vlc calibre elisa kiwix-desktop audacity discord qbittorrent kdenlive flameshot libreoffice-fresh ksysguard --noconfirm
 
-echo -e "\e[31mInstalling Terminal Programs\e[0m" && sleep 2
-
-sudo pacman -S fbset tmux cmus w3m ranger htop feh neofetch neovim git base-devel pkgfile man --noconfirm
-sudo snap install mapscii --noconfirm
-
-#-----
-
-echo -e "\e[31mInstalling Desktop Programs\e[0m" && sleep 2
-
-sudo pacman -S yakuake blender vlc calibre elisa kiwix-desktop audacity discord qbittorrent kdenlive flameshot libreoffice-fresh ksysguard --noconfirm
 yay -S epy-ereader-git protonvpn fluent-reader-bin librewolf-bin vscodium-bin timeshift --noconfirm
-sudo snap install keepassxc --noconfirm
 
-#-----
+doas snap install keepassxc --noconfirm
 
+#//<<-----
+
+       #//>> Games / Platforms / Emulators
 echo -e "\e[31mGames / Platforms / Emulators\e[0m" && sleep 2
 
-sudo pacman -S steam lutris openmw --noconfirm
-sudo pacman -S snes9x mupen64plus dolphin-emu cemu --noconfirm
+doas pacman -S steam lutris openmw --noconfirm
+doas pacman -S snes9x mupen64plus dolphin-emu vbam-sdl --noconfirm
 yay -S minecraft-launcher --noconfirm
-yay -S vbam-git mesen2-git --noconfirm
+yay -S nestopia cemu --noconfirm
+doas snap install ppsspp --noconfirm
 
 echo -e "\e[31mYuzu, Pcsx2 Rpcs3 & ePSXe are Appimages\e[0m"
 kde-open https://yuzu-emu.org/downloads/
@@ -258,26 +290,27 @@ kde-open https://rpcs3.net/download
 kde-open https://www.epsxe.com/download.php
 
 # Xenia can only run on Windows so get it setup on windows VM
-echo -e "\e[31mXenia can only run on Windows so get it setup on windows VM\e[0m"
-sleep 5
 
-#-----
+#//<<-----
 
+       #//>> Virtual Machines
 echo -e "\e[31mVirutal Machines\e[0m" && sleep 2
 
-sudo pacman -S qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt --noconfirm
+doas pacman -S qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt --noconfirm
 # https://github.com/ntdevlabs/tiny11builder
 
-#-----
+#//<<-----
 
+       #//>> Cleanup
 echo -e "\e[31mCleanup\e[0m"
 
 cd ~
 rm -r Temporary --force
-sudo pacman -Sc --noconfirm
+doas pacman -Sc --noconfirm
 
 echo -e "\e[32mDone! Reboot Recommended\e[0m"
 sleep 2
+#//<<-----
 
 }
 #//<<
@@ -288,7 +321,7 @@ function load_kde_rice {
 echo -e "\e[31mDependencies for KDE Ricing\e[0m"
 sleep 2
 yay -S plasma5-applets-window-buttons plasma5-applets-window-appmenu ocs-url --noconfirm
-sudo pacman -S kvantum hicolor-icon-theme knewstuff plasma-framework extra-cmake-modules scrot spectacle kdialog cmake python plasma-framework plasma-desktop plasma-wayland-protocols gtk-engine-murrine sassc gnome-themes-extra zip unzip qt5-base qt5-svg qt5-declarative qt5-quickcontrols --noconfirm
+doas pacman -S kvantum hicolor-icon-theme knewstuff plasma-framework extra-cmake-modules scrot spectacle kdialog cmake python plasma-framework plasma-desktop plasma-wayland-protocols gtk-engine-murrine sassc gnome-themes-extra zip unzip qt5-base qt5-svg qt5-declarative qt5-quickcontrols --noconfirm
 
 # Plasma Customizer Saver   1298955
 #Win11 Icons                1546069
@@ -342,13 +375,13 @@ sleep 2
 # PS1='\[\033[1;37m\]\[\033[1;36m\][\u]\[\033[1;34m\] \w\[\033[1;36m\]> \[\033[1;37m\]'
 
 # Custom bash commands
-# alias de="sudo systemctl start sddm"
-# alias bluetooth "sudo systemctl start bluetooth"
+# alias de="doas systemctl start sddm"
+# alias bluetooth "doas systemctl start bluetooth"
 # alias omnispace="cd ~/Downloads/ && ./OmniSpace_OS.sh"
 # alias logout="qdbus org.kde.ksmserver /KSMServer logout 0 3 3"
-# alias uninstall="sudo pacman -Rns"
-# alias install="sudo pacman -S"
-# alias update="sudo pacman -Syyuu && sudo pacman -Sc"
+# alias uninstall="doas pacman -Rns"
+# alias install="doas pacman -S"
+# alias update="doas pacman -Syyuu && doas pacman -Sc"
 
 
 #Edit /etc/issue to display ascii_name
@@ -378,7 +411,7 @@ sleep 2
 play_animation
 prompt_setup
 
-#----Custom Stuff to make----
+#//>>                ----Custom Stuff to make----
 
 # Grub Screen https://nx2.site/grub-ascii-theme
 # KDE Recreations
@@ -387,6 +420,7 @@ prompt_setup
 
 # ----------TODO-------------------
 # rewrite installer to do a full install with everything then add a second option to manually choose each thing. also change colors. 
+#       This includes the actual install of arch, aka no archinstall script. This will be the only thing needed besides an arch iso
 # remake yakuake theme from scratch with a fresh install
 # gather/complete instructions for each kde rice. THEN:
 # 	bash it with files and make it autorun
@@ -398,8 +432,20 @@ prompt_setup
 # Make installer a graphical enviornment like archinstall. Make arrows move selection and have to press q to quit or choose menu option quit
 # make installer a game
 # make a linux bash version of Tiny11's .bat except automate the downloading of the windows.iso & msdconfig or whatever additional file is needed. Basically automate somehow with this bash script, downloading windows 11, then stripping it and feeding it to the virtual machine. 
-# find out if KDE's settings are saved into a file
+# find out if KDE's settings are saved into a file and also how to clear & edit files
+# Maybe install KDE from a base terminal setup and that way wayland isnt installed and everything is clean. look into what archinstall does and see if its possible to just do it here. Then maybe just test it by having a copy of cyberspaceos on a flash drive
 
 # ----------Links
 # https://www.shellhacks.com/yes-no-bash-script-prompt-confirmation/
 # https://github.com/ytdl-org/youtube-dl
+
+
+#----------------------Steps----------------------
+# 1) Finish the bash script and have it install and set everything up. 
+# 2) Translate it into rust. Making it function identically but as a standalone binary
+# 3) create options and terminal choices and changes that determine whats installed and changed
+# 4) make ascii art and a "game" out of installing linux.
+# 5) maybe make things more complicated with 3d to ascii art renderer and some insane customizations (if i feel like wasting my life) like choosing an init system and package manager. Basically it could reach its final evolution. Like going from ricing an installed arch to using archinstall to installing arch itself to doing linux from scratch and basically being able to make any distro by choosing its package manager and mirror list and desktop enviornment and everything. 
+
+#//<<
+
