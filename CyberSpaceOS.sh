@@ -12,6 +12,7 @@
 # station wlan0 connect NETWORK_NAME_HERE
 # exit
 # pacman -Syy
+# pacman-key --init
 # pacman -S archlinux-keyring
 # pacman -Sy python archinstall
 # archinstall
