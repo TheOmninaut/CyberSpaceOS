@@ -4,7 +4,7 @@
 #        CyberSpace OS
 #0.08
 
-#//>> Installing Arch
+#//>> Installing Archw
 
 # https://mirrors.mit.edu/archlinux/iso/
 # iwctl
@@ -22,11 +22,6 @@
 # cd CyberSpaceOS
 # chmod +x CyberSpaceOS.sh
 # ./CyberSpaceOS.sh
-
-       # Installing KDE & Awesome
-#doas pacman -S xorg xorg-xinit
-# echo exec startkde | doas tee ~/.xinitrc
-#doas pacman -S plasma awesome
 
 #//<<
 
@@ -845,11 +840,20 @@ fi
 
 #//>> Install Programs
 
-       #//>> System Essentials & Initialization & Backup
+        #//>> Install KDE & Awesome
+function install_kde { 
+
+#doas pacaman -S xorg xorg-xinit plasma-wayland-session egl-wayland sddm --no-confirm
+#doas pacman -S plasma kde-applications --no-confirm
+doas pacman -S awesome --no-confirm
+
+}
+       #//<<
+
+        #//>> Arch Essentials & Initialization & Backup
 function install_init {
 echo -e "\e[31mSystem Essentials & Initialization\e[0m" && sleep 2
 
-sudo pacman -Rns plasma-wayland-session egl-wayland kate vim --noconfirm
 sudo pacman -Syyuu --noconfirm
 sudo pacman -S archlinux-keyring git base-devel grub-customizer power-profiles-daemon firewalld opendoas --noconfirm
 echo permit :wheel | sudo tee /etc/doas.conf
@@ -874,6 +878,7 @@ git clone https://aur.archlinux.org/snapd.git
 cd snapd
 makepkg -si --noconfirm
 doas systemctl enable --now snapd.socket
+doas systemctl enable --now snapd.apparmor
 doas ln -s /var/lib/snapd/snap /snap
 cd ..
 
@@ -890,7 +895,7 @@ doas pacman -Sc --noconfirm
 }
 #//<<-----
 
-       #//>> Development
+        #//>> Development
 function install_dev {
 
 echo -e "\e[31mDevelopment\e[0m" && sleep 2
@@ -900,7 +905,7 @@ doas pacman -S gcc gdb --noconfirm
 }
 #//<<-----
 
-       #//>> Terminal Programs
+        #//>> Terminal Programs
 function install_terminal_programs {
 
 echo -e "\e[31mInstalling Terminal Programs\e[0m" && sleep 2
@@ -911,7 +916,7 @@ doas snap install mapscii
 }
 #//<<-----
 
-       #//>> Window Manager Programs
+        #//>> Window Manager Programs
 function install_window_manager_applications {
 
 doas pacman -S nitrogen --no-confirm
@@ -919,7 +924,7 @@ doas pacman -S nitrogen --no-confirm
 }
        #//<<
 
-       #//>> Desktop Programs
+        #//>> Desktop Programs
 function install_desktop_applications {
 
 echo -e "\e[31mInstalling Desktop Programs\e[0m" && sleep 2
@@ -933,7 +938,7 @@ doas snap install keepassxc
 }
 #//<<-----
 
-       #//>> Games / Platforms / Emulators
+        #//>> Games / Platforms / Emulators
 function install_games {
 
 echo -e "\e[31mGames / Platforms / Emulators\e[0m" && sleep 2
@@ -959,7 +964,7 @@ kde-open https://www.epsxe.com/download.php
 }
 #//<<-----
 
-       #//>> Virtual Machines
+        #//>> Virtual Machines
 function install_virtual_machine {
 
 echo -e "\e[31mVirutal Machines\e[0m" && sleep 2
@@ -994,7 +999,7 @@ sleep 2
 
 #----------Edit Bashrc----------
 
-echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n[[ \$- != *i* ]] && return\n# alias ls='ls --color=auto'\n\n#  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after\nPS1='\\[\\\033[1;37m\\]\\[\\\033[1;36m\\][\\u]\\[\\\033[1;34m\\] \\w\\[\\\033[1;36m\\]> \\[\\\033[1;37m\\]'\n\n# Custom bash commands\nalias de=\"doas systemctl start sddm\"\nalias bluetooth=\"doas systemctl start bluetooth\"\nalias omnispace=\"cd ~/Downloads/ && ./OmniSpace_OS.sh \"\nalias logout=\"qdbus org.kde.ksmserver /KSMServer logout 0 3 3\"\nalias uninstall=\"doas pacman -Rns\"\nalias install=\"doas pacman -S\"\nalias update=\"doas pacman -Syyuu && doas pacman -Sc\"\nalias sudo=\"doas\"" | sudo tee ~/.bashrc
+echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n[[ \$- != *i* ]] && return\n# alias ls='ls --color=auto'\n\n#  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after\nPS1='\\[\\\033[1;37m\\]\\[\\\033[1;36m\\][\\u]\\[\\\033[1;34m\\] \\w\\[\\\033[1;36m\\]> \\[\\\033[1;37m\\]'\n\n# Custom bash commands\nalias de=\"doas systemctl start sddm\"\nalias bluetooth=\"doas systemctl start bluetooth\"\nalias omnispace=\"cd ~/Downloads/ && ./OmniSpace_OS.sh \"\nalias logout=\"qdbus org.kde.ksmserver /KSMServer logout 0 3 3\"\nalias uninstall=\"doas pacman -Rns\"\nalias install=\"doas pacman -S\"\nalias update=\"doas pacman -Syyuu && doas pacman -Sc && rustup update\"\nalias sudo=\"doas\"" | sudo tee ~/.bashrc
 
                     # CREATES THIS IN THE TEXT FILE v V V V V V v
 
@@ -1016,7 +1021,7 @@ echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n
 # alias logout="qdbus org.kde.ksmserver /KSMServer logout 0 3 3"
 # alias uninstall="doas pacman -Rns"
 # alias install="doas pacman -S"
-# alias update="doas pacman -Syyuu && yay && doas pacman -Sc"
+# alias update="doas pacman -Syyuu && yay && doas pacman -Sc && rustup update"
 # alias sudo="doas"
 
     # Which Displays as v V V V V V v
@@ -1049,6 +1054,8 @@ echo -e "\n                      ----------Omninaut Presents----------\n     ___
 # ___________/ /____________________________________________________________
 #                                                     arch linux tty1 5.6.1
 
+#----------Grub Ascii Art----------
+echo -e ":(" | sudo tee ~/Desktop/grub_ascii_art.txt
 
 }
 #//<<
@@ -1057,6 +1064,7 @@ echo -e "\n                      ----------Omninaut Presents----------\n     ___
 function rice_awesome {
 
 echo -e "\e[32mNOT FINISHED! DID NOTHING. Now how will i get on Unixporn\e[0m"
+
 sleep 2
 
 }
@@ -1095,10 +1103,11 @@ doas pacman -S kvantum hicolor-icon-theme knewstuff plasma-framework extra-cmake
 # Latte Window Colors Kwin Script       1290287
 # Latte Active Launcher Kwin Script     1221344
 
-echo -e "Ricing Programs"
+echo -e "Installing Application Extensions"
 #General Kde config dot files
 #Yakuake - tabs translucent + config file - Nord Theme
 #VSCode -rust - explicit code folding - nord themes
+#browser - Ublock Origin - adblock plus - youtube adblock - sponsored skip - Nord Theme
 
 
 }
