@@ -970,6 +970,13 @@ function install_virtual_machine {
 echo -e "\e[31mVirutal Machines\e[0m" && sleep 2
 
 doas pacman -S qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt --noconfirm
+doas systemctl enable --now libvirtd.service
+doas usermod -aG libvirt "$USER"
+#if that doesnt work doas usermod -aG libvirt $(whoami)
+#Ensure /etc/libvirt/libvirtd.conf has the entries: unix_sock_group = "libvirt" --- unix_sock_ro_perms = "0777" --- unix_sock_rw_perms = "0770"
+
+echo -e "\e[32mDone! Reboot Recommended. if you dont, at least logout then login\e[0m"
+
 
 # https://github.com/ntdevlabs/tiny11builder
 
@@ -985,8 +992,6 @@ install_window_manager_applications
 install_desktop_applications
 install_games
 install_virtual_machine
-
-echo -e "\e[32mDone! Reboot Recommended\e[0m"
 
 }
 #//<<
@@ -1075,10 +1080,89 @@ function rice_plasma {
 
 echo -e "\e[31mInstalling Dependencies for KDE Ricing\e[0m"
 sleep 2
-yay -S plasma5-applets-window-buttons plasma5-applets-window-appmenu ocs-url --noconfirm
-doas pacman -S kvantum hicolor-icon-theme knewstuff plasma-framework extra-cmake-modules scrot spectacle kdialog cmake python plasma-framework plasma-desktop plasma-wayland-protocols gtk-engine-murrine sassc gnome-themes-extra zip unzip qt5-base qt5-svg qt5-declarative qt5-quickcontrols --noconfirm
+yay -S plasma5-applets-window-buttons plasma5-applets-window-appmenu ocs-url kwin-bismuth --noconfirm
+doas pacman -S kvantum hicolor-icon-theme knewstuff plasma-framework extra-cmake-modules scrot spectacle kdialog cmake python plasma-framework plasma-desktop plasma-wayland-protocols gtk-engine-murrine sassc gnome-themes-extra zip unzip qt5-base qt5-svg qt5-declarative qt5-quickcontrols kdecoration qt5-x11extras --noconfirm
+
+# Lightly
+git clone --single-branch --depth=1 https://github.com/Luwx/Lightly.git
+cd Lightly && mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF ..
+make
+doas make install
+
+#to uninstall: (while in this folder)
+# doas make uninstall
+
+echo -e "Installing Application Extensions"
+#General Kde config dot files
+#Yakuake - tabs translucent + config file - Nord Theme
+#VSCode -rust - explicit code folding - nord themes
+#browser - Ublock Origin - adblock plus - youtube adblock - sponsored skip - Nord Theme - dark mode - zoom to fill ultrawide - floating for youtube
+#blender - texel density
+#audacity - ffmpeg
+#calibre - DRM remover
+
+
+}
+
+function config_plasma {
+
+# https://github.com/shalva97/kde-configuration-files
+
+}
+
+#//<<
+
+play_centered_anim
+prompt_setup
+
+#//>>                ----Custom Stuff to make----
+
+# Grub Screen https://nx2.site/grub-ascii-theme
+# KDE Recreations
+# Game Launcher / visual Organizer (dear IMGUI)
+
+# ----------TODO-------------------
+
+# Make a bash function that creates / replace / stores the plama rices. (replacing plasma customizer widget)
+    # Windows 95
+    # Windows XP
+    # Windows Vista
+    # Windows 10
+    # MacOS Monterey
+    # Windows Future / Super-Fluent / 12 concept https://www.reddit.com/r/unixporn/comments/13tb2rt/kde_6_months_ago_this_windows_12_leaked/
+    # Super Clean / Modern / all white & transparency Arch
+# Plasmoids
+    # basic trash can icon changer (maybe even animate it)
+# Make Grub Ascii art and bash it
+# make all KDE settings found where theyre stored, backup the defaults, and bash the replacements
+
+
+# rewrite installer to do a full install with everything then add a second option to manually choose each thing. also change colors. 
+#       This includes the actual install of arch, aka no archinstall script. This will be the only thing needed besides an arch iso
+# remake yakuake theme from scratch with a fresh install
+# gather/complete instructions for each kde rice. THEN:
+# 	bash it with files and make it autorun
+# CHANGE directories to a temp location
+# 	maybe add an option to save all downloaded files as backup to a folder after install
+# change color theme for system overall to NORD & teal
+# see if its possible to play sounds from terminal.
+
+# Make installer a graphical enviornment like archinstall. Make arrows move selection and have to press q to quit or choose menu option quit
+# make installer a game
+# make a linux bash version of Tiny11's .bat except automate the downloading of the windows.iso & msdconfig or whatever additional file is needed. Basically automate somehow with this bash script, downloading windows 11, then stripping it and feeding it to the virtual machine. 
+# find out if KDE's settings are saved into a file and also how to clear & edit files
+# Maybe install KDE from a base terminal setup and that way wayland isnt installed and everything is clean. look into what archinstall does and see if its possible to just do it here. Then maybe just test it by having a copy of cyberspaceos on a flash drive
+
+# ----------Links
+# https://www.shellhacks.com/yes-no-bash-script-prompt-confirmation/
+# https://github.com/ytdl-org/youtube-dl
+
+#---------Dependencies for themes
+
 
 # Plasma Customizer Saver   1298955
+#Lightly                    1414190     https://github.com/Luwx/Lightly
 #Win11 Icons                1546069
 #Win11 Theme                https://github.com/yeyushengfan258/Win11OS-kde
 #win11 GTK                  1591292
@@ -1103,22 +1187,12 @@ doas pacman -S kvantum hicolor-icon-theme knewstuff plasma-framework extra-cmake
 # Latte Window Colors Kwin Script       1290287
 # Latte Active Launcher Kwin Script     1221344
 
-echo -e "Installing Application Extensions"
-#General Kde config dot files
-#Yakuake - tabs translucent + config file - Nord Theme
-#VSCode -rust - explicit code folding - nord themes
-#browser - Ublock Origin - adblock plus - youtube adblock - sponsored skip - Nord Theme
-
-
-}
-
-function config_plasma {
-
-# https://github.com/shalva97/kde-configuration-files
-
-}
+#----------------------Steps----------------------
+# 1) Finish the bash script and have it install and set everything up. 
+# 2) Translate it into rust. Making it function identically but as a standalone binary
+# 3) create options and terminal choices and changes that determine whats installed and changed
+# 4) make ascii art and a "game" out of installing linux.
+# 5) maybe make things more complicated with 3d to ascii art renderer and some insane customizations (if i feel like wasting my life) like choosing an init system and package manager. Basically it could reach its final evolution. Like going from ricing an installed arch to using archinstall to installing arch itself to doing linux from scratch and basically being able to make any distro by choosing its package manager and mirror list and desktop enviornment and everything. 
 
 #//<<
 
-play_centered_anim
-prompt_setup
