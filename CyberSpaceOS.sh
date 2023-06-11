@@ -36,6 +36,7 @@
 CYANT="\\e[36m"
 CYANLT="\\e[96m"
 CYANH="\\e[46m\\e[30m"
+GRAYH="\\e[100m\\e[97m"
 REDT="\\e[31m"
 #reset color. for use:: printf "${COLOR}TEXT_TO_PRINT${RC}"
 RC="\\e[49m\\e[0m"
@@ -44,12 +45,16 @@ RC="\\e[49m\\e[0m"
 BEGIN=$(date +%s)
 sub_menu=0
 cur_position=0
-menu_options=1
+menu_options=2
 debugdelete=0
 
 # Menu Options
-menu_main_op1="Install Things"
-menu_main_op2="Rice Enviornments"
+
+MENUDIR=" "
+
+menu_main_op1="Install"
+menu_main_op2="Rice"
+menu_main_op3="Backup"
 
 menu_inst_op1="Install Everything"
 menu_inst_op2="Essentials & Initializing"
@@ -69,11 +74,20 @@ menu_desk_op3="Media"
 menu_desk_op4="Creator"
 menu_desk_op5="Plasma 5 Rice Dependencies"
 
+menu_term_op1="All Terminal Programs"
+menu_term_op2="Basics"
+menu_term_op3="Media"
+
+menu_back_op1="Backup Everything"
+menu_back_op2="Arch Repo for Offline"
+menu_back_op3="Current Plasma Rice"
+menu_back_op4="System"
+menu_back_op5="User Files"
+
 #Center Space "prefix"
 clear
 columns=$(tput cols)
-#78 width without "OS", 85 with it. Middle ground is 82
-banner_width=82
+banner_width=82 #78 width without "OS", 85 with it. Middle ground is 82
 indent=$(( (columns - banner_width) / 2 ))
 prefix=''
 for ((i=1; i<=indent; i++)) ; do
@@ -448,14 +462,17 @@ echo -e "${prefix}───────────${CYANT}/ /${RC}────�
 
 #//<<
 
-    #//>> Prompt Setup
+    #//>> Main Menu
 
+        #//>> Menu Rendering
 function draw_menu {
 
 clear
 
 #Print Header
 printf "${CYBERSPACE_MAINHEADER}"
+printf "${GRAYH}[W]Move UP    [S]Move Down    [P]To Select    [Q]Main Menu / Exit Script    [CTRL + C]EMERGENCY EXIT${RC}\n"
+printf "${MENUDIR}\n\n"
 
 #MAIN MENU
 if [ "$sub_menu" -eq 0 ]; then
@@ -470,6 +487,12 @@ if [ "$sub_menu" -eq 0 ]; then
         printf "${CYANH}${menu_main_op2}${RC}\n"
     else
         printf "${menu_main_op2}\n"
+    fi
+
+    if [ "$cur_position" -eq 2 ]; then
+        printf "${CYANH}${menu_main_op3}${RC}\n"
+    else
+        printf "${menu_main_op3}\n"
     fi
 
 #Installation Menu
@@ -579,9 +602,67 @@ elif [ "$sub_menu" -eq 3 ]; then
         printf "${menu_desk_op5}\n"
     fi
 
+#Terminal Programs Menu
+elif [ "$sub_menu" -eq 4 ]; then
+
+    if [ "$cur_position" -eq 0 ]; then
+        printf "${CYANH}${menu_term_op1}${RC}\n"
+    else
+        printf "${menu_term_op1}\n"
+    fi
+
+    if [ "$cur_position" -eq 1 ]; then
+        printf "${CYANH}${menu_term_op2}${RC}\n"
+    else
+        printf "${menu_term_op2}\n"
+    fi
+
+    if [ "$cur_position" -eq 2 ]; then
+        printf "${CYANH}${menu_term_op3}${RC}\n"
+    else
+        printf "${menu_term_op3}\n"
+    fi
+
+# Backup Menu
+elif [ "$sub_menu" -eq 5 ]; then
+
+    if [ "$cur_position" -eq 0 ]; then
+        printf "${CYANH}${menu_back_op1}${RC}\n"
+    else
+        printf "${menu_back_op1}\n"
+    fi
+
+    if [ "$cur_position" -eq 1 ]; then
+        printf "${CYANH}${menu_back_op2}${RC}\n"
+    else
+        printf "${menu_back_op2}\n"
+    fi
+
+    if [ "$cur_position" -eq 2 ]; then
+        printf "${CYANH}${menu_back_op3}${RC}\n"
+    else
+        printf "${menu_back_op3}\n"
+    fi
+
+    if [ "$cur_position" -eq 3 ]; then
+        printf "${CYANH}${menu_back_op4}${RC}\n"
+    else
+        printf "${menu_back_op4}\n"
+    fi
+
+    if [ "$cur_position" -eq 4 ]; then
+        printf "${CYANH}${menu_back_op5}${RC}\n"
+    else
+        printf "${menu_back_op5}\n"
+    fi
+
 fi
 
 }
+
+#//<<
+
+        #//>> Menu Control / Function
 
 function prompt_setup {
 
@@ -608,14 +689,21 @@ while true; do
     
         if [ "$sub_menu" -eq 0 ]; then
             clear
-            printf "${prefix}${CYANH}CYBERSPACE${RC}\n\n"        
+            columns=$(tput cols)
+            banner_width=13 #C-Y-B-E-R-S-P-A-C-E-[]-O-S
+            indent=$(( (columns - banner_width) / 2 ))
+            prefix=''
+            for ((i=1; i<=indent; i++)) ; do
+                prefix+=' '
+            done
+            printf "${prefix}${CYANH}CYBERSPACE OS${RC}\n\n"        
             break
 
         else
             ((cur_position=0))
             ((sub_menu=0))
-            ((menu_options=1))
-
+            ((menu_options=2))
+            MENUDIR=" "
         fi
     
     fi
@@ -631,12 +719,21 @@ while true; do
                 ((cur_position=0))
                 ((sub_menu=1))
                 ((menu_options=7))
+                MENUDIR="${CYANT}INSTALL>${RC}"
 
             #Change to Rice Things
             elif [ "$cur_position" -eq 1 ]; then
                 ((cur_position=0))
                 ((sub_menu=2))
                 ((menu_options=1))
+                MENUDIR="${CYANT}RICE>${RC}"
+
+            #Change to Backup Menu
+            elif [ "$cur_position" -eq 2 ]; then
+                ((cur_position=0))
+                ((sub_menu=5))
+                ((menu_options=4))
+                MENUDIR="${CYANT}BACKUP>${RC}"
 
             fi
 
@@ -653,7 +750,10 @@ while true; do
                 install_dev
 
             elif [ "$cur_position" -eq 3 ]; then
-                install_terminal_programs
+                ((cur_position=0))
+                ((sub_menu=4))
+                ((menu_options=2))
+                MENUDIR="${CYANT}INSTALL TERMINAL>${RC}"
 
             elif [ "$cur_position" -eq 4 ]; then
                 install_window_manager_applications
@@ -662,6 +762,7 @@ while true; do
                 ((cur_position=0))
                 ((sub_menu=3))
                 ((menu_options=4))
+                MENUDIR="${CYANT}INSTALL DESKTOP>${RC}"
 
             elif [ "$cur_position" -eq 6 ]; then
                 install_games
@@ -673,7 +774,14 @@ while true; do
 
         #Rice Things
         elif [ "$sub_menu" -eq 2 ]; then
-            ((debugdelete=0))
+            
+            if [ "$cur_position" -eq 0 ]; then
+                ((debugdelete=0))
+
+            elif [ "$cur_position" -eq 1 ]; then
+                ((debugdelete=0))
+
+            fi
 
         #Desktop Menu
         elif [ "$sub_menu" -eq 3 ]; then
@@ -695,6 +803,40 @@ while true; do
 
             fi
 
+        #Terminal App Installer Menu
+        elif [ "$sub_menu" -eq 4 ]; then
+            
+            if [ "$cur_position" -eq 0 ]; then
+                install_terminal_programs
+
+            elif [ "$cur_position" -eq 1 ]; then
+                install_terminal_basics
+
+            elif [ "$cur_position" -eq 2 ]; then
+                install_terminal_media
+
+            fi
+
+        #Backup Menu
+        elif [ "$sub_menu" -eq 5 ]; then
+            
+            if [ "$cur_position" -eq 0 ]; then
+                backup_all
+
+            elif [ "$cur_position" -eq 1 ]; then
+                backup_arch_repo
+
+            elif [ "$cur_position" -eq 2 ]; then
+                backup_plasma_rice
+
+            elif [ "$cur_position" -eq 3 ]; then
+                backup_system
+
+            elif [ "$cur_position" -eq 4 ]; then
+                backup_files
+
+            fi
+
         fi
 
     fi
@@ -704,6 +846,8 @@ while true; do
 done
 
 }
+#//<<
+
 #//<<
 
 #//<<
@@ -1032,6 +1176,49 @@ echo -e "Installing Application Extensions"
 
 #//<<
 
+#//>> Create Backups
+
+function backup_arch_repo {
+
+printf "HERES WHERE YOUD BACKUP ARCH REPO"
+sleep 2
+
+}
+
+function backup_plasma_rice {
+
+printf "HERES WHERE YOUD SAVE PLASMA RICE"
+sleep 2
+
+}
+
+function backup_system {
+
+printf "HERES WHERE YOUD BACKUP SYSTEM"
+sleep 2
+
+}
+
+function backup_files {
+
+printf "HERES WHERE YOUD BACKUP USER FILES"
+sleep 2
+
+}
+
+function backup_all {
+
+backup_arch_repo
+backup_plasma_rice
+backup_system
+backup_files
+
+}
+
+
+#//<<
+
+clear
 play_centered_anim
 prompt_setup
 
