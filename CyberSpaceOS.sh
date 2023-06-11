@@ -2,9 +2,9 @@
 
 #------Omninaut Presents------
 #        CyberSpace OS
-#0.09
+#0.10
 
-#//>> Installing Archw
+#//>> Prescript / Installing Arch
 
 # https://mirrors.mit.edu/archlinux/iso/
 # iwctl
@@ -16,7 +16,9 @@
 # pacman -S archlinux-keyring
 # pacman -Sy python archinstall
 # archinstall
-# Include git during install under "additional packages" && use GRUB
+    # Include git during install under "additional packages"
+    # use GRUB bootloader
+    # Choose KDE Plama
 # cd Downloads
 # git clone https://github.com/theomninaut/CyberSpaceOS
 # cd CyberSpaceOS
@@ -26,11 +28,49 @@
 #//<<
 
 
-#//>> Startup Ascii Animation
-function play_centered_anim {
+#//>> Script Interface & Function
 
+    #//>> Initialize Variables
+
+# Colors
+CYANT="\\e[36m"
+CYANLT="\\e[96m"
+CYANH="\\e[46m\\e[30m"
+REDT="\\e[31m"
+#reset color. for use:: printf "${COLOR}TEXT_TO_PRINT${RC}"
+RC="\\e[49m\\e[0m"
+
+# Menu Function Variables
+BEGIN=$(date +%s)
+sub_menu=0
+cur_position=0
+menu_options=1
+debugdelete=0
+
+# Menu Options
+menu_main_op1="Install Things"
+menu_main_op2="Rice Enviornments"
+
+menu_inst_op1="Install Everything"
+menu_inst_op2="Essentials & Initializing"
+menu_inst_op3="Programming Development"
+menu_inst_op4="Terminal Programs"
+menu_inst_op5="Awesome Programs"
+menu_inst_op6="Desktop Programs"
+menu_inst_op7="Game Platforms"
+menu_inst_op8="Virtual Machines"
+
+menu_rice_op1="Terminal Rice"
+menu_rice_op2="Plasma Rice"
+
+menu_desk_op1="All Desktop Applications"
+menu_desk_op2="Basics"
+menu_desk_op3="Media"
+menu_desk_op4="Creator"
+menu_desk_op5="Plasma 5 Rice Dependencies"
+
+#Center Space "prefix"
 clear
-
 columns=$(tput cols)
 #78 width without "OS", 85 with it. Middle ground is 82
 banner_width=82
@@ -39,6 +79,14 @@ prefix=''
 for ((i=1; i<=indent; i++)) ; do
     prefix+=' '
 done
+
+#ASCII Headers
+CYBERSPACE_MAINHEADER="${prefix}    ─────────────────────────────────────────────────────────────────────────\\n${prefix}    ${CYANT}_____          __     _____   ____   _____   _____  ____    _____  _____${RC}\\n${prefix}   ${CYANT}/ ___/ __  __  / /__  / ___/  /   /  / ___/  /    / /    \\  / ___/ / ___/${RC}\\n${prefix}  ${CYANT}/ /___ / /_/ / /    / / __/_  / _ \\   __\\ \\  / ___/ /  _  / / /__  / __/_${RC}  █▀█ ▄▀▀\\n${prefix} ${CYANT}/_____/ \\__  / /____/ /_____/ /_/ \\_\\ \\____/ /_/    /_/ /_/ /____/ /_____/${RC}  █▄█ ▄██\\n${prefix}───────────${CYANT}/ /${RC}───────────────────────────────────────────────────────────────\\n"
+
+#//<<
+
+    #//>> Startup Ascii Animation
+function play_centered_anim {
 
 clear
 
@@ -389,62 +437,275 @@ echo -e "${prefix}───────────/ /────────�
 sleep .1
 clear
 echo -e "${prefix}    ─────────────────────────────────────────────────────────────────────────"
-echo -e "${prefix}    \e[36m_____          __     _____   ____   _____   _____  ____    _____  _____\e[0m"
-echo -e "${prefix}   \e[36m/ ___/ __  __  / /__  / ___/  /   /  / ___/  /    / /    \  / ___/ / ___/\e[0m"
-echo -e "${prefix}  \e[36m/ /___ / /_/ / /    / / __/_  / _ \\   __\\ \\  / ___/ /  _  / / /__  / __/_\e[0m  █▀█ ▄▀▀"
-echo -e "${prefix} \e[36m/_____/ \\__  / /____/ /_____/ /_/ \\_\\ \\____/ /_/    /_/ /_/ /____/ /_____/\e[0m  █▄█ ▄██"
-echo -e "${prefix}───────────\e[36m/ /\e[0m───────────────────────────────────────────────────────────────"
+echo -e "${prefix}    ${CYANT}_____          __     _____   ____   _____   _____  ____    _____  _____${RC}"
+echo -e "${prefix}   ${CYANT}/ ___/ __  __  / /__  / ___/  /   /  / ___/  /    / /    \  / ___/ / ___/${RC}"
+echo -e "${prefix}  ${CYANT}/ /___ / /_/ / /    / / __/_  / _ \\   __\\ \\  / ___/ /  _  / / /__  / __/_${RC}  █▀█ ▄▀▀"
+echo -e "${prefix} ${CYANT}/_____/ \\__  / /____/ /_____/ /_/ \\_\\ \\____/ /_/    /_/ /_/ /____/ /_____/${RC}  █▄█ ▄██"
+echo -e "${prefix}───────────${CYANT}/ /${RC}───────────────────────────────────────────────────────────────"
 
 
 }
 
 #//<<
 
-#//>> Prompt Setup
-function prompt_setup {
-echo
-echo
-echo -e "\e[32m1\e[0m: Install Programs"
-echo -e "2: Install Rice Files"
-echo -e "3: Rice Awesome & Terminal Programs"
-echo -e "4: Choose Plasma Rice"
-echo -e "\e[31mPress Any Other Key to Exit\e[0m"
-echo
-echo
-read -p "Type Choice: " -n 1 -r
+    #//>> Prompt Setup
 
-echo
-echo
-if [[ $REPLY =~ ^[1]$ ]]
-then
+function draw_menu {
 
-install_all
-prompt_setup
-
-elif [[ $REPLY =~ ^[2]$ ]]
-then
-
-rice_terminal
-prompt_setup
-
-elif [[ $REPLY =~ ^[3]$ ]]
-then
-
-rice_awesome
-prompt_setup
-
-elif [[ $REPLY =~ ^[4]$ ]]
-then
-
-rice_plasma
-prompt_setup
-
-else
 clear
-echo -e "\e[32mEnjoy!\e[0m"
+
+#Print Header
+printf "${CYBERSPACE_MAINHEADER}"
+
+#MAIN MENU
+if [ "$sub_menu" -eq 0 ]; then
+
+    if [ "$cur_position" -eq 0 ]; then
+        printf "${CYANH}${menu_main_op1}${RC}\n"
+    else
+        printf "${menu_main_op1}\n"
+    fi
+
+    if [ "$cur_position" -eq 1 ]; then
+        printf "${CYANH}${menu_main_op2}${RC}\n"
+    else
+        printf "${menu_main_op2}\n"
+    fi
+
+#Installation Menu
+elif [ "$sub_menu" -eq 1 ]; then
+    
+    #Install Everything
+    if [ "$cur_position" -eq 0 ]; then
+        printf "${CYANH}${menu_inst_op1}${RC}\n"
+    else
+        printf "${menu_inst_op1}\n"
+    fi
+
+    #Essentials & Initializing
+    if [ "$cur_position" -eq 1 ]; then
+        printf "${CYANH}${menu_inst_op2}${RC}\n"
+    else
+        printf "${menu_inst_op2}\n"
+    fi
+
+    #Programming Development
+    if [ "$cur_position" -eq 2 ]; then
+        printf "${CYANH}${menu_inst_op3}${RC}\n"
+    else
+        printf "${menu_inst_op3}\n"
+    fi
+
+    #Terminal Programs
+    if [ "$cur_position" -eq 3 ]; then
+        printf "${CYANH}${menu_inst_op4}${RC}\n"
+    else
+        printf "${menu_inst_op4}\n"
+    fi
+
+    #Awesome Programs
+    if [ "$cur_position" -eq 4 ]; then
+        printf "${CYANH}${menu_inst_op5}${RC}\n"
+    else
+        printf "${menu_inst_op5}\n"
+    fi
+
+    #Plasma Programs
+    if [ "$cur_position" -eq 5 ]; then
+        printf "${CYANH}${menu_inst_op6}${RC}\n"
+    else
+        printf "${menu_inst_op6}\n"
+    fi
+
+    #Game Platforms
+    if [ "$cur_position" -eq 6 ]; then
+        printf "${CYANH}${menu_inst_op7}${RC}\n"
+    else
+        printf "${menu_inst_op7}\n"
+    fi
+
+    #Virtual Machines
+    if [ "$cur_position" -eq 7 ]; then
+        printf "${CYANH}${menu_inst_op8}${RC}\n"
+    else
+        printf "${menu_inst_op8}\n"
+    fi
+
+#Ricing Menu
+elif [ "$sub_menu" -eq 2 ]; then
+    
+    if [ "$cur_position" -eq 0 ]; then
+        printf "${CYANH}${menu_rice_op1}${RC}\n"
+    else
+        printf "${menu_rice_op1}\n"
+    fi
+
+    if [ "$cur_position" -eq 1 ]; then
+        printf "${CYANH}${menu_rice_op2}${RC}\n"
+    else
+        printf "${menu_rice_op2}\n"
+    fi
+
+#Desktop Installers
+elif [ "$sub_menu" -eq 3 ]; then
+    
+    if [ "$cur_position" -eq 0 ]; then
+        printf "${CYANH}${menu_desk_op1}${RC}\n"
+    else
+        printf "${menu_desk_op1}\n"
+    fi
+
+    if [ "$cur_position" -eq 1 ]; then
+        printf "${CYANH}${menu_desk_op2}${RC}\n"
+    else
+        printf "${menu_desk_op2}\n"
+    fi
+
+    if [ "$cur_position" -eq 2 ]; then
+        printf "${CYANH}${menu_desk_op3}${RC}\n"
+    else
+        printf "${menu_desk_op3}\n"
+    fi
+
+    if [ "$cur_position" -eq 3 ]; then
+        printf "${CYANH}${menu_desk_op4}${RC}\n"
+    else
+        printf "${menu_desk_op4}\n"
+    fi
+
+    if [ "$cur_position" -eq 4 ]; then
+        printf "${CYANH}${menu_desk_op5}${RC}\n"
+    else
+        printf "${menu_desk_op5}\n"
+    fi
 
 fi
+
 }
+
+function prompt_setup {
+
+while true; do
+
+    read -t 0.25 -N 1 input
+
+    #--------------------Move Cursor UP--------------------
+    if [[ $input = "w" ]] || [[ $input = "W" ]]; then
+        if [ "$cur_position" -gt 0 ]; then
+            ((cur_position-=1))
+        fi
+    fi
+
+    #--------------------Move Cursor DOWN--------------------
+    if [[ $input = "s" ]] || [[ $input = "S" ]]; then
+        if [ "$cur_position" -lt "$menu_options" ]; then
+            ((cur_position+=1))
+        fi
+    fi
+
+    #--------------------Main_Menu / Quit--------------------
+    if [[ $input = "q" ]] || [[ $input = "Q" ]]; then
+    
+        if [ "$sub_menu" -eq 0 ]; then
+            clear
+            printf "${prefix}${CYANH}CYBERSPACE${RC}\n\n"        
+            break
+
+        else
+            ((cur_position=0))
+            ((sub_menu=0))
+            ((menu_options=1))
+
+        fi
+    
+    fi
+
+    #--------------------Acts as Accept or Enter--------------------
+    if [[ $input = "p" ]] || [[ $input = "P" ]]; then
+
+        #Main Menu
+        if [ "$sub_menu" -eq 0 ]; then
+
+            #Change to Install Things
+            if [ "$cur_position" -eq 0 ]; then
+                ((cur_position=0))
+                ((sub_menu=1))
+                ((menu_options=7))
+
+            #Change to Rice Things
+            elif [ "$cur_position" -eq 1 ]; then
+                ((cur_position=0))
+                ((sub_menu=2))
+                ((menu_options=1))
+
+            fi
+
+        #Install Things
+        elif [ "$sub_menu" -eq 1 ]; then
+            
+            if [ "$cur_position" -eq 0 ]; then
+                install_all
+
+            elif [ "$cur_position" -eq 1 ]; then
+                install_init
+
+            elif [ "$cur_position" -eq 2 ]; then
+                install_dev
+
+            elif [ "$cur_position" -eq 3 ]; then
+                install_terminal_programs
+
+            elif [ "$cur_position" -eq 4 ]; then
+                install_window_manager_applications
+
+            elif [ "$cur_position" -eq 5 ]; then
+                ((cur_position=0))
+                ((sub_menu=3))
+                ((menu_options=4))
+
+            elif [ "$cur_position" -eq 6 ]; then
+                install_games
+
+            elif [ "$cur_position" -eq 7 ]; then
+                install_virtual_machine
+
+            fi
+
+        #Rice Things
+        elif [ "$sub_menu" -eq 2 ]; then
+            ((debugdelete=0))
+
+        #Desktop Menu
+        elif [ "$sub_menu" -eq 3 ]; then
+            
+            if [ "$cur_position" -eq 0 ]; then
+                install_desktop_applications
+
+            elif [ "$cur_position" -eq 1 ]; then
+                install_desktop_basics
+
+            elif [ "$cur_position" -eq 2 ]; then
+                install_desktop_media
+
+            elif [ "$cur_position" -eq 3 ]; then
+                install_desktop_creator
+
+            elif [ "$cur_position" -eq 4 ]; then
+                install_plasma5_dependencies
+
+            fi
+
+        fi
+
+    fi
+
+    draw_menu
+
+done
+
+}
+#//<<
+
 #//<<
 
 #//>> Install Programs
@@ -452,19 +713,19 @@ fi
         #//>> Install KDE & Awesome
 function install_kde { 
 
-#doas pacaman -S xorg xorg-xinit plasma-wayland-session egl-wayland sddm --no-confirm
-#doas pacman -S plasma kde-applications --no-confirm
-doas pacman -S awesome --no-confirm
+#doas pacaman -S xorg xorg-xinit plasma-wayland-session egl-wayland sddm
+#doas pacman -S plasma kde-applications
+doas pacman -S awesome
 
 }
        #//<<
 
         #//>> Arch Essentials & Initialization & Backup
 function install_init {
-echo -e "\e[31mSystem Essentials & Initialization\e[0m" && sleep 2
+echo -e "${CYANH}System Essentials & Initialization${RC}" && sleep 2
 
-sudo pacman -Syyuu --noconfirm
-sudo pacman -S archlinux-keyring git base-devel grub-customizer power-profiles-daemon firewalld opendoas pulseaudio-bluetooth --noconfirm
+sudo pacman -Syyuu
+sudo pacman -S archlinux-keyring git base-devel grub-customizer power-profiles-daemon firewalld opendoas pulseaudio-bluetooth ntfs-3g xboxdrv
 echo permit :wheel | sudo tee /etc/doas.conf
 doas systemctl set-default multi-user.target
 doas systemctl enable power-profiles-daemon
@@ -479,19 +740,19 @@ cd Temporary
 
 git clone https://aur.archlinux.org/yay.git
 cd yay
-makepkg -si --noconfirm
-yay -Syu --noconfirm
-yay -S timeshift --noconfirm
+makepkg -si
+yay -Syu
+yay -S timeshift
 
 git clone https://aur.archlinux.org/snapd.git
 cd snapd
-makepkg -si --noconfirm
+makepkg -si
 doas systemctl enable --now snapd.socket
 doas systemctl enable --now snapd.apparmor
 doas ln -s /var/lib/snapd/snap /snap
 cd ..
 
-doas pacman -S flatpak --noconfirm
+doas pacman -S flatpak
 # flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 # flatpak update
 #-------------BROKEN v ^ v ^ v ^ v ^ v ^ v ^
@@ -499,7 +760,7 @@ doas pacman -S flatpak --noconfirm
 
 cd ~
 rm -r Temporary --force
-doas pacman -Sc --noconfirm
+doas pacman -Sc
 
 }
 #//<<-----
@@ -507,20 +768,33 @@ doas pacman -Sc --noconfirm
         #//>> Development
 function install_dev {
 
-echo -e "\e[31mDevelopment\e[0m" && sleep 2
+echo -e "${CYANH}Development${RC}" && sleep 2
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-doas pacman -S gcc gdb --noconfirm
+doas pacman -S gcc gdb
 
 }
 #//<<-----
 
         #//>> Terminal Programs
+
+function install_terminal_basics {
+
+doas pacman -S fbset tmux w3m ranger htop neofetch git base-devel pkgfile man
+doas snap install mapscii
+
+}
+
+function install_terminal_media {
+
+doas pacman -S cmus feh neovim
+yay -S epy-ereader-git --no-confirm
+    
+}
+
 function install_terminal_programs {
 
-echo -e "\e[31mInstalling Terminal Programs\e[0m" && sleep 2
-
-doas pacman -S fbset tmux cmus w3m ranger htop feh neofetch neovim git base-devel pkgfile man --noconfirm
-doas snap install mapscii
+install_terminal_basics
+install_terminal_media
 
 }
 #//<<-----
@@ -534,39 +808,66 @@ doas pacman -S nitrogen --no-confirm
        #//<<
 
         #//>> Desktop Programs
-function install_desktop_applications {
 
-echo -e "\e[31mInstalling Desktop Programs\e[0m" && sleep 2
+function install_desktop_basics {
 
-doas pacman -S yakuake blender vlc calibre elisa kiwix-desktop audacity discord qbittorrent kdenlive flameshot libreoffice-fresh --noconfirm
-yay -S epy-ereader-git protonvpn brave-bin vscodium-bin timeshift --noconfirm
+doas pacman -S yakuake discord flameshot
+yay -S protonvpn brave-bin timeshift
 doas snap install keepassxc
 
-echo -e "\e[31mInstalling Dependencies for KDE Ricing\e[0m"
-sleep 2
-doas pacman -S kvantum hicolor-icon-theme knewstuff plasma-framework extra-cmake-modules scrot spectacle kdialog cmake python plasma-framework plasma-desktop plasma-wayland-protocols gtk-engine-murrine sassc gnome-themes-extra zip unzip qt5-base qt5-svg qt5-declarative qt5-quickcontrols kdecoration qt5-x11extras --noconfirm
-yay -S plasma5-applets-window-buttons plasma5-applets-window-appmenu ocs-url kwin-bismuth --noconfirm
+}
+
+function install_desktop_creator {
+
+doas pacman -S blender audacity kdenlive libreoffice-fresh
+yay -S vscodium-bin
+
+}
+
+function install_desktop_media {
+
+doas pacman -S vlc calibre elisa kiwix-desktop qbittorrent
+
+}
+
+function install_plasma5_dependencies {
+
+doas pacman -S kvantum hicolor-icon-theme knewstuff plasma-framework extra-cmake-modules scrot spectacle kdialog cmake python plasma-framework plasma-desktop plasma-wayland-protocols gtk-engine-murrine sassc gnome-themes-extra zip unzip qt5-base qt5-svg qt5-declarative qt5-quickcontrols kdecoration qt5-x11extras
+yay -S plasma5-applets-window-buttons plasma5-applets-window-appmenu ocs-url kwin-bismuth
+
+}
+
+function install_desktop_applications {
+
+install_desktop_basics
+install_desktop_creator
+install_desktop_media
+install_plasma5_dependencies
 
 }
 #//<<-----
 
         #//>> Games / Platforms / Emulators
+
+function install_game_platforms {
+
+doas pacman -S steam lutris wine wine-mono wine-gecko
+
+}
+
 function install_games {
 
-echo -e "\e[31mGames / Platforms / Emulators\e[0m" && sleep 2
+doas pacman -S openmw
+yay -S minecraft-launcher
 
-# Platforms
-doas pacman -S steam lutris wine wine-mono wine-gecko --noconfirm
+}
 
-# Games
-doas pacman -S openmw --noconfirm
-yay -S minecraft-launcher --noconfirm
+function install_emulators {
 
-# Emulators
-doas pacman -S snes9x mupen64plus dolphin-emu vbam-sdl dosbox --noconfirm
-yay -S nestopia cemu --noconfirm
+doas pacman -S snes9x mupen64plus dolphin-emu vbam-sdl dosbox
+yay -S nestopia cemu
 doas snap install ppsspp
-echo -e "\e[31mYuzu, Pcsx2 Rpcs3 & ePSXe are Appimages\e[0m"
+echo -e "${CYANH}Yuzu, Pcsx2 Rpcs3 & ePSXe are Appimages${RC}"
 kde-open https://yuzu-emu.org/downloads/
 kde-open https://pcsx2.net/downloads
 kde-open https://rpcs3.net/download
@@ -574,20 +875,29 @@ kde-open https://www.epsxe.com/download.php
 # Xenia can only run on Windows so get it setup on windows VM
 
 }
+
+function install_gaming_all {
+
+install_game_platforms
+install_games
+install_emulators
+
+}
 #//<<-----
 
         #//>> Virtual Machines
 function install_virtual_machine {
 
-echo -e "\e[31mVirutal Machines\e[0m" && sleep 2
+echo -e "${CYANH}Virutal Machines${RC}" && sleep 2
 
-doas pacman -S qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt --noconfirm
+doas pacman -S qemu
+doas pacman -S virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt
 doas systemctl enable --now libvirtd.service
 doas usermod -aG libvirt "$USER"
 #if that doesnt work doas usermod -aG libvirt $(whoami)
 #Ensure /etc/libvirt/libvirtd.conf has the entries: unix_sock_group = "libvirt" --- unix_sock_ro_perms = "0777" --- unix_sock_rw_perms = "0770"
 
-echo -e "\e[32mDone! Reboot Recommended. if you dont, at least logout then login\e[0m"
+echo -e "${CYANH}Done! Reboot Recommended. if you dont, at least logout then login${RC}"
 
 
 # https://github.com/ntdevlabs/tiny11builder
@@ -602,7 +912,7 @@ install_dev
 install_terminal_programs
 install_window_manager_applications
 install_desktop_applications
-install_games
+install_gaming_all
 install_virtual_machine
 
 reboot
@@ -610,15 +920,17 @@ reboot
 }
 #//<<
 
-#//>> Terminal
+#//>> Rice Enviornments
+
+    #//>> Terminal
 function rice_terminal {
 
-echo -e "\e[32mRicing Terminal\e[0m"
+echo -e "${CYANH}Ricing Terminal${RC}"
 sleep 2
 
 #----------Edit Bashrc----------
 
-echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n[[ \$- != *i* ]] && return\n# alias ls='ls --color=auto'\n\n#  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after\nPS1='\\[\\\033[1;37m\\]\\[\\\033[1;36m\\][\\u]\\[\\\033[1;34m\\] \\w\\[\\\033[1;36m\\]> \\[\\\033[1;37m\\]'\n\n# Custom bash commands\nalias de=\"doas systemctl start sddm\"\nalias bluetooth=\"doas systemctl start bluetooth\"\nalias omnispace=\"cd ~/Downloads/ && ./OmniSpace_OS.sh \"\nalias logout=\"qdbus org.kde.ksmserver /KSMServer logout 0 3 3\"\nalias uninstall=\"doas pacman -Rns\"\nalias install=\"doas pacman -S\"\nalias update=\"doas pacman -Syyuu && doas pacman -Sc && rustup update\"\nalias sudo=\"doas\"" | sudo tee ~/.bashrc
+echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n[[ \$- != *i* ]] && return\n# alias ls='ls --color=auto'\n\n#  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after\nPS1='\\[\\\033[1;37m\\]\\[\\\033[1;36m\\][\\u]\\[\\\033[1;34m\\] \\w\\[\\\033[1;36m\\]> \\[\\\033[1;37m\\]'\n\n# Custom bash commands\nalias de=\"doas systemctl start sddm\"\nalias bluetooth=\"doas systemctl start bluetooth\"\nalias cs=\"cd ~/Downloads/ && ./CyberSpace_OS.sh \"\nalias logout=\"qdbus org.kde.ksmserver /KSMServer logout 0 3 3\"\nalias uninstall=\"doas pacman -Rns\"\nalias install=\"doas pacman -S\"\nalias update=\"doas pacman -Syyuu && doas pacman -Sc && rustup update\"\nalias sudo=\"doas\"" | sudo tee ~/.bashrc
 
                     # CREATES THIS IN THE TEXT FILE v V V V V V v
 
@@ -636,7 +948,7 @@ echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n
 # Custom bash commands
 # alias de="doas systemctl start sddm"
 # alias bluetooth "doas systemctl start bluetooth"
-# alias cyberspace="cd ~/Downloads/ && ./CyberSpace_OS.sh"
+# alias cs="cd ~/Downloads/ && ./CyberSpace_OS.sh"
 # alias logout="qdbus org.kde.ksmserver /KSMServer logout 0 3 3"
 # alias uninstall="doas pacman -Rns"
 # alias install="doas pacman -S"
@@ -681,17 +993,17 @@ echo -e ":(" | sudo tee ~/Desktop/grub_ascii_art.txt
 }
 #//<<
 
-#//>> Awesome
+    #//>> Awesome
 function rice_awesome {
 
-echo -e "\e[32mNOT FINISHED! DID NOTHING. Now how will i get on Unixporn\e[0m"
+echo -e "${CYANH}NOT FINISHED! DID NOTHING. Now how will i get on Unixporn${RC}"
 
 sleep 2
 
 }
 #//<<
 
-#//>> Plasma
+    #//>> Plasma
 function rice_plasma {
 
 # Lightly
@@ -718,10 +1030,12 @@ echo -e "Installing Application Extensions"
 
 #//<<
 
+#//<<
+
 play_centered_anim
 prompt_setup
 
-#//>>                ----Custom Stuff to make----
+#//>>                ----Custom Stuff to make----           !!!DELETE BELOW!!!
 
 # Grub Screen https://nx2.site/grub-ascii-theme
 # KDE Recreations
