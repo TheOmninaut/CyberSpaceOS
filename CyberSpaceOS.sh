@@ -1,8 +1,7 @@
 #!/bin/bash
 
-#------Omninaut Presents------
-#        CyberSpace OS
-#0.10
+#   ------Omninaut Presents------
+#            CyberSpace OS    v0.10
 
 #//>> Prescript / Installing Arch
 
@@ -27,19 +26,45 @@
 
 #//<<
 
+#//>> Documentation
+
+# ----------What is CyberSpace OS?----------
+# A Distro? Its a single file that can install an Arch Linux based operating system. The Operating System doesnt do much beyond installation & providing some rices. 
+
+# ----------What is the simple version----------
+# Instead of having an interface with many options, the simple version is a quick set of commands that does everything the main version can do. The difference is the script is alot shorter and quicker to install but doesnt offer different options for custom setups. 
+
+# ----------What are the Requirements----------
+# When this script does everything archinstall can do, the only requirements will be an arch.iso, this script, and a package repository (either the arch repo using internet or an offline repo using the backup feature of the script) but as of now, an already installed arch linux system is required with KDE Plasma & GRUB completed with the archinstall script. 
+
+# 
+# 
+# 
+# 
+#//<<
+
+
 
 #//>> Script Interface & Function
 
     #//>> Initialize Variables
 
-# Colors
+# ::Colors::
+# Text---- 30=Black; 31=RED; 32=GREEN; 33=Yellow; 34=BLUE; 35=MAGENTA; 36=CYAN 37=LightGray;
+# Text---- 90=DarkGray; 91=LightRED; 92=LightGREEN; 93=LightYellow; 94=LightBLUE; 95=LightMAGENTA; 96=LightCYAN 97=White;
+# Background/Highlight ---- 40=Black; 41=RED; 42=GREEN; 43=Yellow; 44=BLUE; 45=MAGENTA; 46=CYAN; 47=LightGray;
+# Background/Highlight ---- 100=DarkGray; 101=LightRED; 102=LightGREEN; 103=LightYellow; 104=LightBLUE; 105=LightMAGENTA; 106=LightCYAN 107=White;
 CYANT="\\e[36m"
 CYANLT="\\e[96m"
+GREENT="\\e[32m"
+GRAYT="\\e[90m"
+GREENH="\\e[42m"
 CYANH="\\e[46m\\e[30m"
+GREENH="\\e[42m\\e[30m"
 GRAYH="\\e[100m\\e[97m"
 REDT="\\e[31m"
 #reset color. for use:: printf "${COLOR}TEXT_TO_PRINT${RC}"
-RC="\\e[49m\\e[0m"
+RC="\\e[0m"
 
 # Menu Function Variables
 BEGIN=$(date +%s)
@@ -471,7 +496,7 @@ clear
 
 #Print Header
 printf "${CYBERSPACE_MAINHEADER}"
-printf "${GRAYH}[W]Move UP    [S]Move Down    [P]To Select    [Q]Main Menu / Exit Script    [CTRL + C]EMERGENCY EXIT${RC}\n"
+printf "${GRAYT}[W]Move UP    [S]Move Down    [P]To Select    [Q]Main Menu / Exit Script    [CTRL + C]EMERGENCY EXIT${RC}\n"
 printf "${MENUDIR}\n\n"
 
 #MAIN MENU
@@ -664,6 +689,15 @@ fi
 
         #//>> Menu Control / Function
 
+function goto_mainmenu {
+
+((cur_position=0))
+((sub_menu=0))
+((menu_options=2))
+MENUDIR=" "
+
+}
+
 function prompt_setup {
 
 while true; do
@@ -700,10 +734,7 @@ while true; do
             break
 
         else
-            ((cur_position=0))
-            ((sub_menu=0))
-            ((menu_options=2))
-            MENUDIR=" "
+            goto_mainmenu
         fi
     
     fi
@@ -742,12 +773,15 @@ while true; do
             
             if [ "$cur_position" -eq 0 ]; then
                 install_all
+                exit
 
             elif [ "$cur_position" -eq 1 ]; then
                 install_init
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 2 ]; then
                 install_dev
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 3 ]; then
                 ((cur_position=0))
@@ -757,6 +791,7 @@ while true; do
 
             elif [ "$cur_position" -eq 4 ]; then
                 install_window_manager_applications
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 5 ]; then
                 ((cur_position=0))
@@ -766,9 +801,11 @@ while true; do
 
             elif [ "$cur_position" -eq 6 ]; then
                 install_games
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 7 ]; then
                 install_virtual_machine
+                goto_mainmenu
 
             fi
 
@@ -788,18 +825,23 @@ while true; do
             
             if [ "$cur_position" -eq 0 ]; then
                 install_desktop_applications
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 1 ]; then
                 install_desktop_basics
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 2 ]; then
                 install_desktop_media
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 3 ]; then
                 install_desktop_creator
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 4 ]; then
                 install_plasma5_dependencies
+                goto_mainmenu
 
             fi
 
@@ -808,12 +850,15 @@ while true; do
             
             if [ "$cur_position" -eq 0 ]; then
                 install_terminal_programs
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 1 ]; then
                 install_terminal_basics
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 2 ]; then
                 install_terminal_media
+                goto_mainmenu
 
             fi
 
@@ -822,18 +867,23 @@ while true; do
             
             if [ "$cur_position" -eq 0 ]; then
                 backup_all
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 1 ]; then
                 backup_arch_repo
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 2 ]; then
                 backup_plasma_rice
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 3 ]; then
                 backup_system
+                goto_mainmenu
 
             elif [ "$cur_position" -eq 4 ]; then
                 backup_files
+                goto_mainmenu
 
             fi
 
@@ -852,7 +902,7 @@ done
 
 #//<<
 
-#//>> Install Programs
+#//>> Install
 
         #//>> Install KDE & Awesome
 function install_kde { 
@@ -869,24 +919,25 @@ function install_init {
 echo -e "${CYANH}System Essentials & Initialization${RC}" && sleep 2
 
 sudo pacman -Syyuu
-sudo pacman -S archlinux-keyring git base-devel grub-customizer power-profiles-daemon firewalld opendoas pulseaudio-bluetooth ntfs-3g xboxdrv
+sudo pacman -S archlinux-keyring git base-devel grub-customizer power-profiles-daemon firewalld opendoas pulseaudio-bluetooth ntfs-3g
 echo permit :wheel | sudo tee /etc/doas.conf
 doas systemctl set-default multi-user.target
 doas systemctl enable power-profiles-daemon
 doas systemctl enable bluetooth
-cd ~
-mkdir Backups
-mkdir Projects
-mkdir -p Applications
-mkdir Temporary
 
-cd Temporary
+mkdir ~/Backups
+mkdir ~/Projects
+mkdir -p ~/Applications
+mkdir ~/Applications/CyberSpaceOS
+mkdir ~/Temporary
+
+cd ~/Temporary
 
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
 yay -Syu
-yay -S timeshift
+yay -S timeshift xboxdrv
 
 git clone https://aur.archlinux.org/snapd.git
 cd snapd
@@ -905,6 +956,8 @@ doas pacman -S flatpak
 cd ~
 rm -r Temporary --force
 doas pacman -Sc
+
+mv $PWD/CyberSpaceOS.sh ~/Applications/CyberSpaceOS
 
 }
 #//<<-----
@@ -1076,12 +1129,16 @@ reboot
     #//>> Terminal
 function rice_terminal {
 
+clear
 echo -e "${CYANH}Ricing Terminal${RC}"
 sleep 2
 
 #----------Edit Bashrc----------
 
-echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n[[ \$- != *i* ]] && return\n# alias ls='ls --color=auto'\n\n#  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after\nPS1='\\[\\\033[1;37m\\]\\[\\\033[1;36m\\][\\u]\\[\\\033[1;34m\\] \\w\\[\\\033[1;36m\\]> \\[\\\033[1;37m\\]'\n\n# Custom bash commands\nalias de=\"doas systemctl start sddm\"\nalias bluetooth=\"doas systemctl start bluetooth\"\nalias cs=\"cd ~/Downloads/ && ./CyberSpace_OS.sh \"\nalias logout=\"qdbus org.kde.ksmserver /KSMServer logout 0 3 3\"\nalias uninstall=\"doas pacman -Rns\"\nalias install=\"doas pacman -S\"\nalias update=\"doas pacman -Syyuu && doas pacman -Sc && rustup update\"\nalias sudo=\"doas\"" | sudo tee ~/.bashrc
+echo -e "clear\\n columns=\$(tput cols)\\n banner_width=10 #C-Y-B-E-R-S-P-A-C-E\\n indent=\$(( (columns - banner_width) / 2 ))\\n prefix=''\\n for ((i=1; i<=indent; i++)) ; do\\n prefix+=' '\\n done\\n printf \"\${prefix}\\\e[46m\\\\e[30mCYBERSPACE\\\e[0m\"\necho \"\"" | sudo tee ~/Applications/clear.sh
+doas chmod +x ~/Applications/clear.sh
+
+echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n[[ \$- != *i* ]] && return\n# alias ls='ls --color=auto'\n\n#  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after\nPS1='\\[\\\033[1;37m\\]\\[\\\033[1;36m\\][\\u]\\[\\\033[1;34m\\] \\w\\[\\\033[1;36m\\]> \\[\\\033[1;37m\\]\\\e[0m'\n\n# Custom bash commands\nalias de=\"doas systemctl start sddm\"\nalias bluetooth=\"doas systemctl start bluetooth\"\nalias cs=\"./Applications/CyberSpace_OS.sh \"\nalias logout=\"qdbus org.kde.ksmserver /KSMServer logout 0 3 3\"\nalias uninstall=\"doas pacman -Rns\"\nalias install=\"doas pacman -S\"\nalias update=\"doas pacman -Syyuu && doas pacman -Sc && rustup update\"\nalias sudo=\"doas\"\nalias clear=\"./Applications/clear.sh\"" | sudo tee ~/.bashrc
 
                     # CREATES THIS IN THE TEXT FILE v V V V V V v
 
@@ -1094,17 +1151,18 @@ echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n
 # alias ls='ls --color=auto'
 
 #  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after
-# PS1='\[\033[1;37m\]\[\033[1;36m\][\u]\[\033[1;34m\] \w\[\033[1;36m\]> \[\033[1;37m\]'
+# PS1='\[\033[1;37m\]\[\033[1;36m\][\u]\[\033[1;34m\] \w\[\033[1;36m\]> \[\033[1;37m\]\e[0m'
 
 # Custom bash commands
 # alias de="doas systemctl start sddm"
 # alias bluetooth "doas systemctl start bluetooth"
-# alias cs="cd ~/Downloads/ && ./CyberSpace_OS.sh"
+# alias cs="./Applications/CyberSpace_OS.sh"
 # alias logout="qdbus org.kde.ksmserver /KSMServer logout 0 3 3"
 # alias uninstall="doas pacman -Rns"
 # alias install="doas pacman -S"
 # alias update="doas pacman -Syyuu && yay && doas pacman -Sc && rustup update"
 # alias sudo="doas"
+# alias clear="./Applications/clear.sh"
 
     # Which Displays as v V V V V V v
 
@@ -1261,19 +1319,20 @@ prompt_setup
 # Make a bash function that creates / replace / stores the plama rices. (replacing plasma customizer widget)
     # Windows 95
     # Windows XP
-    # Windows Vista
+    # Windows Vista/7
     # Windows 10
     # MacOS Monterey
     # Windows Future / Super-Fluent / 12 concept https://www.reddit.com/r/unixporn/comments/13tb2rt/kde_6_months_ago_this_windows_12_leaked/
     # Super Clean / Modern / all white & transparency Arch
+    # more as i find and create more. Point is the rice files should be a single, super tiny file that can be loaded and unloaded with a single command, and also shared super easily. just drag and drop into a folder and bam, rice accessible. 
+
 # Plasmoids
     # basic trash can icon changer (maybe even animate it)
 # Make Grub Ascii art and bash it
 # make all KDE Ricer (Saver & Loader). if possible DONT have it be a plasmoid but maybe a sub-function of this program + a very very tiny program that can always run. Maybe like yakuake where it can be quit or launched but only runs in the background doing nothing, not taking any resources, then when you click the show more functions in the task tray, its a little window that shows the saved rices and you can just click to restore & click to save current setup. 
 #https://github.com/shalva97/kde-configuration-files
 
-# rewrite installer to do a full install with everything then add a second option to manually choose each thing. also change colors. 
-#       This includes the actual install of arch, aka no archinstall script. This will be the only thing needed besides an arch iso
+#       This includes the actual install of arch, aka no archinstall script. This will be the only thing needed besides an arch iso (&repo)
 # remake yakuake theme from scratch with a fresh install
 # gather/complete instructions for each kde rice. THEN:
 # 	bash it with files and make it autorun
@@ -1282,11 +1341,9 @@ prompt_setup
 # change color theme for system overall to NORD & teal
 # see if its possible to play sounds from terminal.
 
-# Make installer a graphical enviornment like archinstall. Make arrows move selection and have to press q to quit or choose menu option quit
 # make installer a game
-# make a linux bash version of Tiny11's .bat except automate the downloading of the windows.iso & msdconfig or whatever additional file is needed. Basically automate somehow with this bash script, downloading windows 11, then stripping it and feeding it to the virtual machine. 
 # find out if KDE's settings are saved into a file and also how to clear & edit files
-# Maybe install KDE from a base terminal setup and that way wayland isnt installed and everything is clean. look into what archinstall does and see if its possible to just do it here. Then maybe just test it by having a copy of cyberspaceos on a flash drive
+# Maybe install KDE from a base terminal setup. look into what archinstall does and see if its possible to just do it here. Then maybe just test it by having a copy of cyberspaceos on a flash drive with offline repo & online repo
 
 # ----------Links
 # https://www.shellhacks.com/yes-no-bash-script-prompt-confirmation/
