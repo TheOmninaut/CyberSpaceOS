@@ -963,7 +963,7 @@ doas snap install keepassxc
 
 function install_desktop_creator {
 
-doas pacman -S blender audacity kdenlive libreoffice-fresh
+doas pacman -S blender audacity kdenlive libreoffice-fresh freecad
 yay -S vscodium-bin
 
 }
@@ -971,6 +971,13 @@ yay -S vscodium-bin
 function install_desktop_media {
 
 doas pacman -S vlc calibre elisa kiwix-desktop qbittorrent
+
+}
+
+function install_desktop_extras {
+
+doas pacman -S marble
+yay -S foxtrotgps
 
 }
 
@@ -1183,6 +1190,25 @@ function backup_arch_repo {
 printf "HERES WHERE YOUD BACKUP ARCH REPO"
 sleep 2
 
+mkdir ~/Backups/CyberSpaceRepo
+cd ~/Backups/CyberSpaceRepo
+mkdir /tmp/blankdb
+sudo pacman -Syyw --cachedir ./ --dbpath /tmp/blankdb archinstall awesome plasma kde-applications xorg xorg-xinit plasma-wayland-session egl-wayland sddm archlinux-keyring git curl base-devel grub-customizer power-profiles-daemon firewalld opendoas pulseaudio-bluetooth ntfs-3g xboxdrv flatpak gcc gdb fbset tmux w3m ranger htop neofetch git base-devel pkgfile man cmus feh neovim nitrogen yakuake discord flameshot blender audacity kdenlive libreoffice-fresh freecad vlc calibre elisa kiwix-desktop qbittorrent marble ocs-url kwin-bismuth steam lutris wine wine-mono wine-gecko openmw snes9x mupen64plus dolphin-emu vbam-sdl dosbox qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt
+#ADD all the necessary files for all possible arch install dependencies & regualar arch installation required packages & possibilities like maybe XFCE or lightdm. 
+
+repo-add cyberspacerepo.db.tar.gz
+repo-add cyberspacerepo.db.tar.gz ./*.tar.zst
+repo-add cyberspacerepo.db.tar.gz ./*.tar.xz
+repo-add cyberspacerepo.db.tar.gz ./*.tar.gz
+
+cd ..
+mkdir ~/Backups/AUR
+git clone https://aur.archlinux.org/yay.git
+git clone https://aur.archlinux.org/snapd.git
+git clone https://aur.archlinux.org/timeshift.git
+
+mkdir ~/Backups/AppImages
+
 }
 
 function backup_plasma_rice {
@@ -1229,6 +1255,8 @@ prompt_setup
 # Game Launcher / visual Organizer (dear IMGUI)
 
 # ----------TODO-------------------
+#Finish the application Backups & Test
+# Finish the main menu debugging
 
 # Make a bash function that creates / replace / stores the plama rices. (replacing plasma customizer widget)
     # Windows 95
