@@ -1068,14 +1068,16 @@ yay -S minecraft-launcher
 
 function install_emulators {
 
-doas pacman -S snes9x mupen64plus dolphin-emu vbam-sdl dosbox
-yay -S nestopia cemu
-doas snap install ppsspp
-echo -e "${CYANH}Yuzu, Pcsx2 Rpcs3 & ePSXe are Appimages${RC}"
-kde-open https://yuzu-emu.org/downloads/
-kde-open https://pcsx2.net/downloads
-kde-open https://rpcs3.net/download
-kde-open https://www.epsxe.com/download.php
+doas pacman -S snes9x mupen64plus dolphin-emu dosbox fceux
+yay -S cemu-bin
+doas snap install ppsspp visualboyadvance-m
+doas snap install yuzu citra epsxe pscx2 rpcs3
+
+# Yuzu, Pcsx2 Rpcs3 & ePSXe are also Appimages
+# kde-open https://yuzu-emu.org/downloads/
+# kde-open https://pcsx2.net/downloads
+# kde-open https://rpcs3.net/download
+# kde-open https://www.epsxe.com/download.php
 # Xenia can only run on Windows so get it setup on windows VM
 
 }
@@ -1101,7 +1103,7 @@ doas usermod -aG libvirt "$USER"
 #if that doesnt work doas usermod -aG libvirt $(whoami)
 #Ensure /etc/libvirt/libvirtd.conf has the entries: unix_sock_group = "libvirt" --- unix_sock_ro_perms = "0777" --- unix_sock_rw_perms = "0770"
 
-echo -e "${CYANH}Done! Reboot Recommended. if you dont, at least logout then login${RC}"
+echo -e "${CYANH}Done! Reboot Recommended. if you dont, at least logout then login${RC}" && sleep 3
 
 
 # https://github.com/ntdevlabs/tiny11builder
@@ -1311,6 +1313,7 @@ prompt_setup
 # Grub Screen https://nx2.site/grub-ascii-theme
 # KDE Recreations
 # Game Launcher / visual Organizer (dear IMGUI)
+# Change Neofetch so it says CyberSpace OS maybe, with custom ASCII Art. (Make it optional & NOT automatic)
 
 # ----------TODO-------------------
 #Finish the application Backups & Test
