@@ -18,6 +18,7 @@
     # Include git during install under "additional packages"
     # use GRUB bootloader
     # Choose KDE Plama
+    # pipewire NOTpulse-audio
 # git clone https://github.com/theomninaut/CyberSpaceOS
 # cd CyberSpaceOS
 # chmod +x CyberSpaceOS.sh
@@ -39,7 +40,7 @@ fi
 #//>> Documentation
 
 # ----------What is CyberSpace OS?----------
-# A Distro? Its a single file that can install an Arch Linux based operating system. The Operating System doesnt do much beyond installation & providing some rices. 
+# A Distro? Its a single file that can install an Arch Linux based operating system. The Operating System doesnt do much beyond installation & providing some rices. There will also be an ISO available with calamares installer and simple setup. The idea is to create my own distro that can be cherry picked and edited. should you want no work, download the ISO. should you want some parts but change others, get the installer and go through the text options. want to edit and change things to make a simple and easy portable setup for yourself, just get the simple and edit the text. In the end, this "OS" is really just a compilation of other softwares and works that other projects made and maintain. this also means this script can be easily backed up to be a single simple text file for full installs. it also means when things change it needs to be updated and possibly remade. This means the ISO is the safest for archiving and long term back ups, but takes the most space. 
 
 # ----------What is the simple version----------
 # Instead of having an interface with many options, the simple version is a quick set of commands that does everything the main version can do. The difference is the script is alot shorter and quicker to install but doesnt offer different options for custom setups. 
@@ -131,6 +132,12 @@ done
 
 #ASCII Headers
 CYBERSPACE_MAINHEADER="${prefix}    ─────────────────────────────────────────────────────────────────────────\\n${prefix}    ${CYANT}_____          __     _____   ____   _____   _____  ____    _____  _____${RC}\\n${prefix}   ${CYANT}/ ___/ __  __  / /__  / ___/  /   /  / ___/  /    / /    \\  / ___/ / ___/${RC}\\n${prefix}  ${CYANT}/ /___ / /_/ / /    / / __/_  / _ \\   __\\ \\  / ___/ /  _  / / /__  / __/_${RC}  █▀█ ▄▀▀\\n${prefix} ${CYANT}/_____/ \\__  / /____/ /_____/ /_/ \\_\\ \\____/ /_/    /_/ /_/ /____/ /_____/${RC}  █▄█ ▄██\\n${prefix}───────────${CYANT}/ /${RC}───────────────────────────────────────────────────────────────\\n"
+
+function prompt_password {
+
+read -s -p "Enter Password for sudo: " sudoPW
+
+}
 
 #//<<
 
@@ -914,14 +921,36 @@ done
 
 #//>> Install
 
-        #//>> Install KDE & Awesome
-function install_kde { 
-
+        #//>> Install Desktop Enviornment & Window Manager & TTY versions
+function install_ui_dependencies { 
 #doas pacaman -S xorg xorg-xinit plasma-wayland-session egl-wayland sddm
+}
+
+function install_de {
 #doas pacman -S plasma kde-applications
+}
+
+function install_wm {
 doas pacman -S awesome
+}
+
+# Insert the middle thing i want to make
+
+function install_ttye {
+doas pacman -S tmux gpm
+yay -S twin
+}
+
+function install_enviornments {
+
+install_ui_dependencies
+install_ttye
+install_wm
+install_de
 
 }
+
+
        #//<<
 
         #//>> Arch Essentials & Initialization & Backup
@@ -929,13 +958,17 @@ function install_init {
 echo -e "${CYANH}System Essentials & Initialization${RC}" && sleep 2
 
 sudo pacman -Syyuu
-sudo pacman -S archlinux-keyring git base-devel grub-customizer power-profiles-daemon firewalld opendoas pulseaudio-bluetooth ntfs-3g
+sudo pacman -S archlinux-keyring git base-devel grub-customizer power-profiles-daemon firewalld opendoas pipewire-jack pipewire-pulse ntfs-3g unrar p7zip
+echo VULKAN-INTEL_OR_VULKAN-RADEON
 echo permit :wheel | sudo tee /etc/doas.conf
 doas systemctl set-default multi-user.target
 doas systemctl enable power-profiles-daemon
 doas systemctl enable bluetooth
 
+
 mkdir ~/Backups
+mkdir ~/Fonts
+mkdir ~/Games
 mkdir ~/Projects
 mkdir -p ~/Applications
 mkdir ~/Applications/CyberSpaceOS
@@ -988,22 +1021,34 @@ doas pacman -S gcc gdb
 
 function install_terminal_basics {
 
-doas pacman -S fbset tmux w3m ranger htop neofetch git base-devel pkgfile man
-doas snap install mapscii
+doas pacman -S fbset git base-devel pkgfile man fish curl
+doas pacman -S ranger bashtop neofetch wego
 
 }
 
 function install_terminal_media {
 
-doas pacman -S cmus feh neovim
+doas pacman -S w3m cmus feh neovim yt-dlp newsboat ​mps-youtube
 yay -S epy-ereader-git --no-confirm
-    
+doas snap install mapscii
+
+}
+
+function install_terminal_games {
+
+sudo pacman -S dwarffortress
+yay -S bastet 
+#ninvaders pacman4console nsnake greed bsdgames 2048 nudoku
+#asciicker
+#steam: Cogmind, Warsim: the realm Aslona
+
 }
 
 function install_terminal_programs {
 
 install_terminal_basics
 install_terminal_media
+install_terminal_games
 
 }
 #//<<-----
@@ -1021,15 +1066,15 @@ doas pacman -S nitrogen --no-confirm
 function install_desktop_basics {
 
 doas pacman -S yakuake discord flameshot
-yay -S protonvpn brave-bin timeshift
+yay -S brave-bin timeshift mullvad-vpn
 doas snap install keepassxc
 
 }
 
 function install_desktop_creator {
 
-doas pacman -S blender audacity kdenlive libreoffice-fresh freecad
-yay -S vscodium-bin
+doas pacman -S blender audacity kdenlive libreoffice-fresh freecad zim
+yay -S vscodium-bin magicavoxel
 
 }
 
@@ -1041,7 +1086,7 @@ doas pacman -S vlc calibre elisa kiwix-desktop qbittorrent
 
 function install_desktop_extras {
 
-doas pacman -S marble
+doas pacman -S marble thunderbird
 yay -S foxtrotgps
 
 }
@@ -1074,7 +1119,8 @@ install_plasma5_dependencies
 
 function install_game_platforms {
 
-doas pacman -S steam lutris wine wine-mono wine-gecko
+doas pacman -S steam lutris wine wine-mono wine-gecko winetricks
+yay -S protontricks
 
 }
 
@@ -1086,11 +1132,14 @@ yay -S minecraft-launcher
 }
 
 function install_emulators {
+#CHANGE To MAMKE THESE ALL APPIMAGSE
+# doas pacman -Syu --needed base-devel boost catch2 cmake ffmpeg fmt git glslang libzip lz4 mbedtls ninja nlohmann-json openssl opus qt5 sdl2 zlib zstd zip unzip
 
 doas pacman -S snes9x mupen64plus dolphin-emu dosbox fceux ppsspp
 yay -S cemu-bin
 doas snap install visualboyadvance-m yuzu citra epsxe pscx2 rpcs3
 
+doas pacman -S snes9x-gtk
 yay -S mupen64plus-qt jstest-gtk-git
 
 # Yuzu, Pcsx2 Rpcs3 & ePSXe are also Appimages
@@ -1160,7 +1209,7 @@ sleep 2
 echo -e "clear\\n columns=\$(tput cols)\\n banner_width=10 #C-Y-B-E-R-S-P-A-C-E\\n indent=\$(( (columns - banner_width) / 2 ))\\n prefix=''\\n for ((i=1; i<=indent; i++)) ; do\\n prefix+=' '\\n done\\n printf \"\${prefix}\\\e[46m\\\\e[30mCYBERSPACE\\\e[0m\"\necho \"\"" | sudo tee ~/Applications/clear.sh
 doas chmod +x ~/Applications/clear.sh
 
-echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n[[ \$- != *i* ]] && return\n# alias ls='ls --color=auto'\n\n#  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after\nPS1='\\[\\\033[1;37m\\]\\[\\\033[1;36m\\][\\u]\\[\\\033[1;34m\\] \\w\\[\\\033[1;36m\\]> \\[\\\033[1;37m\\]\\\e[0m'\n\n# Custom bash commands\nalias de=\"doas systemctl start sddm\"\nalias bluetooth=\"doas systemctl start bluetooth\"\nalias cs=\"./Applications/CyberSpace_OS.sh \"\nalias logout=\"qdbus org.kde.ksmserver /KSMServer logout 0 3 3\"\nalias uninstall=\"doas pacman -Rns\"\nalias install=\"doas pacman -S\"\nalias update=\"doas pacman -Syyuu && doas pacman -Sc && rustup update\"\nalias sudo=\"doas\"\nalias clear=\"./Applications/clear.sh\"" | sudo tee ~/.bashrc
+echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n[[ \$- != *i* ]] && return\n# alias ls='ls --color=auto'\n\n#  white before vv       cyan vv   user    blue vv   dir    cyan vv   > [space] white after\nPS1='\\[\\\033[1;37m\\]\\[\\\033[1;36m\\][\\u]\\[\\\033[1;34m\\] \\w\\[\\\033[1;36m\\]> \\[\\\033[1;37m\\]\\\e[0m'\n\n# Custom bash commands\nalias de=\"doas systemctl start sddm\"\nalias bluetooth=\"doas systemctl start bluetooth\"\nalias cs=\"./Applications/CyberSpace_OS.sh \"\nalias logout=\"qdbus org.kde.ksmserver /KSMServer logout 0 3 3\"\nalias uninstall=\"doas pacman -Rns\"\nalias install=\"doas pacman -S\"\nalias update=\"doas pacman -S archlinux-keyring && doas pacman -Syyuu && yay && doas pacman -Sc && rustup update\"\nalias sudo=\"doas\"\nalias clear=\"./Applications/clear.sh\"" | sudo tee ~/.bashrc
 
                     # CREATES THIS IN THE TEXT FILE v V V V V V v
 
@@ -1176,15 +1225,22 @@ echo -e "#\n# ~/.bashrc\n#\n\n# if not running interactively, dont do anything\n
 # PS1='\[\033[1;37m\]\[\033[1;36m\][\u]\[\033[1;34m\] \w\[\033[1;36m\]> \[\033[1;37m\]\e[0m'
 
 # Custom bash commands
-# alias de="doas systemctl start sddm"
+//NOT IMPLEMENTED ABOVE YET! # alias tty="plasma-session-terminate && doas systemctl stop sddm"
+//CHANGED! # alias de="startplasma-wayland"
+//NOT IMPLEMENTED ABOVE YET! # alias wm="some command that starts a window manager"
+//NOT IMPLEMENTED ABOVE YET! # alias ttyde="doas systemctl start gpm && twin"
+//NOT IMPLEMENTED ABOVE YET! # alias ttywm="Some Command to start tmux session that works like a wm
+//NOT IMPLEMENTED ABOVE YET! # alias windows="some command to start a windows VM in QEMU without leaving tty and without plasma"
 # alias bluetooth "doas systemctl start bluetooth"
 # alias cs="./Applications/CyberSpace_OS.sh"
 # alias logout="qdbus org.kde.ksmserver /KSMServer logout 0 3 3"
 # alias uninstall="doas pacman -Rns"
 # alias install="doas pacman -S"
-# alias update="doas pacman -Syyuu && yay && doas pacman -Sc && rustup update"
+# alias update="doas pacman -S archlinux-keyring && doas pacman -Syyuu && yay && doas pacman -Sc && rustup update"
 # alias sudo="doas"
 # alias clear="./Applications/clear.sh"
+//NOT IMPLEMENTED ABOVE YET! # alias ttylist="echo Web-Browser : w3m && echo Music-Player : cmus && echo File-Manager : Ranger && Task-Manager : bashtop && echo E-Reader : epy"
+//IMPLEMENT INTO ALL ABOVE! # echo $sudoPW | sudo -S ----- where 0000 is the users password so it doesnt prompt for pass & ----- is the command that requires SUDO
 
     # Which Displays as v V V V V V v
 
@@ -1250,7 +1306,7 @@ doas make install
 echo -e "Installing Application Extensions"
 #General Kde config dot files
 #Yakuake - tabs translucent + config file - Nord Theme
-#VSCode -rust - explicit code folding - nord themes
+#VSCode - rust-analyzer - explicit folding - nord deep - stitch(bscotch) - TODO
 #browser - Ublock Origin - adblock plus - youtube adblock - sponsored skip - Nord Theme - dark mode - zoom to fill ultrawide - floating for youtube
 #blender - texel density
 #audacity - ffmpeg
@@ -1273,7 +1329,7 @@ sleep 2
 mkdir ~/Backups/CyberSpaceRepo
 cd ~/Backups/CyberSpaceRepo
 mkdir /tmp/blankdb
-sudo pacman -Syyw --cachedir ./ --dbpath /tmp/blankdb archinstall awesome plasma kde-applications xorg xorg-xinit plasma-wayland-session egl-wayland sddm archlinux-keyring git curl base-devel grub-customizer power-profiles-daemon firewalld opendoas pulseaudio-bluetooth ntfs-3g xboxdrv flatpak gcc gdb fbset tmux w3m ranger htop neofetch git base-devel pkgfile man cmus feh neovim nitrogen yakuake discord flameshot blender audacity kdenlive libreoffice-fresh freecad vlc calibre elisa kiwix-desktop qbittorrent marble ocs-url kwin-bismuth steam lutris wine wine-mono wine-gecko openmw snes9x mupen64plus dolphin-emu vbam-sdl dosbox qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt
+sudo pacman -Syyw --cachedir ./ --dbpath /tmp/blankdb archinstall awesome plasma kde-applications xorg xorg-xinit plasma-wayland-session egl-wayland sddm archlinux-keyring git curl base-devel grub-customizer power-profiles-daemon firewalld opendoas pipewire-pulse ntfs-3g xboxdrv flatpak gcc gdb fbset tmux w3m ranger htop neofetch git base-devel pkgfile man cmus feh neovim nitrogen yakuake discord flameshot blender audacity kdenlive libreoffice-fresh freecad vlc calibre elisa kiwix-desktop qbittorrent marble ocs-url kwin-bismuth steam lutris wine wine-mono wine-gecko openmw snes9x mupen64plus dolphin-emu vbam-sdl dosbox qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat libguestfs libvirt
 #ADD all the necessary files for all possible arch install dependencies & regualar arch installation required packages & possibilities like maybe XFCE or lightdm. 
 
 repo-add cyberspacerepo.db.tar.gz
@@ -1324,11 +1380,14 @@ backup_files
 
 #//<<
 
-
 placement_check
 clear
 play_centered_anim
+prompt_password
 prompt_setup
+
+
+
 
 #//>>                ----Custom Stuff to make----           !!!DELETE BELOW!!!
 
@@ -1409,6 +1468,11 @@ prompt_setup
 # 3) create options and terminal choices and changes that determine whats installed and changed
 # 4) make ascii art and a "game" out of installing linux.
 # 5) maybe make things more complicated with 3d to ascii art renderer and some insane customizations (if i feel like wasting my life) like choosing an init system and package manager. Basically it could reach its final evolution. Like going from ricing an installed arch to using archinstall to installing arch itself to doing linux from scratch and basically being able to make any distro by choosing its package manager and mirror list and desktop enviornment and everything. 
+
+
+#-------------------Possible Changes-----------------------------
+# create a Cyberspace_OS iso for a physical backup
+# check out NixOS or other reproducible arch to replace this and system as a whole 
 
 #//<<
 
